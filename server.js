@@ -64,6 +64,7 @@ app.post('/api/upload', adminOnly, upload.single('file'), (req, res) => {
 
 // API
 app.use('/api/lands', require('./routes/lands'));
+app.use('/api/settings', require('./routes/settings'));
 
 // Page routes
 app.get('/contact', (_req, res) =>

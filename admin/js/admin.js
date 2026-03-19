@@ -7,6 +7,14 @@ let editingId  = null;
 let deleteId   = null;
 let uploadedImages = []; // Track uploaded images during form editing
 
+// ── Maps ──
+let landFormMap = null;      // Map for land location selection
+let settingsMap = null;      // Map for office location selection
+let landMarker  = null;      // Land location marker
+let officeMarker = null;     // Office location marker
+let landLat = 0, landLng = 0;       // Form map coordinates
+let officeLat = 17.9757, officeLng = 102.6331; // Settings map coordinates (default Vientiane)
+
 // ── Auth ──
 async function doLogin() {
   const pw = gv('login-pw');
@@ -169,10 +177,120 @@ function switchPanel(name) {
   document.querySelectorAll('.sb-nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('panel-' + name)?.classList.add('active');
   document.getElementById('sbn-' + name)?.classList.add('active');
-  const titles = { dashboard: 'Dashboard', listings: 'All Listings', pending: 'Pending Submissions', add: 'Add Listing' };
+  const titles = { dashboard: 'Dashboard', listings: 'All Listings', pending: 'Pending Submissions', add: 'Add Listing', settings: 'Settings' };
   tx('main-header-title', titles[name] || name);
   if (name === 'listings') renderTable();
   if (name === 'pending') loadPendingSubmissions();
+  if (name === 'settings') {
+    setTimeout(() => initSettingsMap(), 100);
+    loadOfficeLocation();
+  }
+}
+
+// ── Map initialization for land location on form ──
+function initLandFormMap() {
+  if (landFormMap) landFormMap.remove();
+  
+  landFormMap = L.map('land-form-map').setView([15.8700, 100.9925], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(landFormMap);
+
+  landFormMap.on('click', function(e) {
+    const { lat, lng } = e.latlng;
+    landLat = lat;
+    landLng = lng;
+    
+    if (landMarker) landFormMap.removeLayer(landMarker);
+    landMarker = L.marker([lat, lng]).addTo(landFormMap).bindPopup(`Land location`).openPopup();
+    
+    sv('f-latitude', lat.toFixed(6));
+    sv('f-longitude', lng.toFixed(6));
+  });
+}
+
+// ── Map initialization for office location on settings panel ──
+function initSettingsMap() {
+  if (settingsMap) settingsMap.remove();
+  
+  settingsMap = L.map('settings-map').setView([officeLat, officeLng], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(settingsMap);
+
+  // Place initial marker
+  placeOfficeMarker(officeLat, officeLng);
+
+  settingsMap.on('click', function(e) {
+    const { lat, lng } = e.latlng;
+    officeLat = lat;
+    officeLng = lng;
+    placeOfficeMarker(lat, lng);
+    sv('office-coords', `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+  });
+}
+
+function placeOfficeMarker(lat, lng) {
+  if (officeMarker) settingsMap.removeLayer(officeMarker);
+  officeMarker = L.marker([lat, lng]).addTo(settingsMap).bindPopup(`TERRA Office`).openPopup();
+}
+
+// ── Load office location from database ──
+async function loadOfficeLocation() {
+  try {
+    const settings = await fetch(API_BASE + '/settings').then(r => r.json());
+    if (settings.officeLocation && settings.officeLocation.coordinates.coordinates) {
+      const [lng, lat] = settings.officeLocation.coordinates.coordinates;
+      officeLat = lat;
+      officeLng = lng;
+      sv('office-name', settings.officeLocation.name || 'TERRA Headquarters');
+      sv('office-phone', settings.officeLocation.phone || '+856 20 52877075');
+      sv('office-email', settings.officeLocation.email || 'info@terra-land.com');
+      sv('office-coords', `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+    }
+  } catch (e) {
+    console.error('Failed to load office location:', e);
+  }
+}
+
+// ── Save office location ──
+async function saveOfficeLocation() {
+  try {
+    if (!officeLat || !officeLng) {
+      alert('Please click on the map to set office location');
+      return;
+    }
+
+    const body = {
+      officeLocation: {
+        name: gv('office-name') || 'TERRA Headquarters',
+        phone: gv('office-phone') || '+856 20 52877075',
+        email: gv('office-email') || 'info@terra-land.com',
+        coordinates: {
+          type: 'Point',
+          coordinates: [officeLng, officeLat]
+        }
+      }
+    };
+
+    await fetch(API_BASE + '/settings', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-token': adminToken
+      },
+      body: JSON.stringify(body)
+    }).then(r => {
+      if (!r.ok) throw new Error('Failed to save');
+      return r.json();
+    });
+
+    toast('Office location saved ✓');
+  } catch (e) {
+    toast('Failed to save office location: ' + e.message, true);
+  }
 }
 
 // ── Add modal ──
@@ -181,6 +299,7 @@ function openAdd() {
   tx('form-modal-title', 'Add New Listing');
   resetForm();
   openModal('form-modal');
+  setTimeout(() => initLandFormMap(), 100);
 }
 
 // ── Edit modal ──
@@ -189,6 +308,7 @@ async function openEdit(id) {
   tx('form-modal-title', 'Edit Listing');
   resetForm();
   openModal('form-modal');
+  setTimeout(() => initLandFormMap(), 100);
 
   try {
     const l = await apiReq(`/lands/${id}`);
@@ -213,6 +333,15 @@ function fillForm(l) {
   sv('f-phone',   l.phone   || '');
   sv('f-status',  l.status  || 'available');
   sv('f-featured', l.featured ? 'true' : 'false');
+  
+  // Load coordinates if they exist
+  if (l.coordinates && l.coordinates.coordinates && l.coordinates.coordinates.length === 2) {
+    const [lng, lat] = l.coordinates.coordinates;
+    landLat = lat;
+    landLng = lng;
+    sv('f-latitude', lat.toFixed(6));
+    sv('f-longitude', lng.toFixed(6));
+  }
   
   // Handle image URLs
   uploadedImages = [];
@@ -292,6 +421,7 @@ function buildFormBody() {
   if (!g('f-type'))                          throw new Error('Land type is required');
   if (!g('f-area'))                          throw new Error('Area is required');
   if (isNaN(price) || price <= 0)            throw new Error('Price must be a positive number');
+  if (!landLat || !landLng)                  throw new Error('Please click on the map to set land location');
 
   // Combine uploaded images with URL images
   const images = [...uploadedImages];
@@ -313,7 +443,11 @@ function buildFormBody() {
     phone:    g('f-phone'),
     status:   g('f-status'),
     featured: g('f-featured') === 'true',
-    images
+    images,
+    coordinates: {
+      type: 'Point',
+      coordinates: [landLng, landLat]  // [longitude, latitude]
+    }
   };
 }
 

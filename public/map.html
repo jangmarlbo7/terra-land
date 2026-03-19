@@ -343,30 +343,38 @@
       }
     }
 
-    // Load company headquarters marker
-    function loadCompanyHQ() {
-      const hqIcon = L.divIcon({
-        html: `<div style="background-color: #0d0d0d; width: 35px; height: 35px; border-radius: 50%; border: 3px solid #b8860b; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">★</div>`,
-        iconSize: [35, 35]
-      });
+    // Load company headquarters marker from API
+    async function loadCompanyHQ() {
+      try {
+        const settings = await fetch('/api/settings').then(r => r.json());
+        if (!settings.officeLocation) return;
 
-      // TERRA Headquarters - Vientiane, Laos
-      const hqMarker = L.marker([17.9757, 102.6331], { icon: hqIcon }).addTo(map);
-      hqMarker.bindPopup(`
-        <div class="popup-content">
-          <strong>TERRA Headquarters</strong>
-          <span>Vientiane, Laos</span>
-          <span style="font-size: 12px; color: #666;">We are located here. Visit us or contact us to learn about land opportunities.</span>
-          <div style="margin-top: 10px;">
-            <a href="tel:+85620528770575" style="color: #3498db; font-size: 12px;">📞 +856 20 52877075</a><br>
-            <a href="mailto:info@terra-land.com" style="color: #3498db; font-size: 12px;">📧 info@terra-land.com</a>
+        const [lng, lat] = settings.officeLocation.coordinates.coordinates;
+        const { name, phone, email } = settings.officeLocation;
+
+        const hqIcon = L.divIcon({
+          html: `<div style="background-color: #0d0d0d; width: 35px; height: 35px; border-radius: 50%; border: 3px solid #b8860b; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">★</div>`,
+          iconSize: [35, 35]
+        });
+
+        const hqMarker = L.marker([lat, lng], { icon: hqIcon }).addTo(map);
+        hqMarker.bindPopup(`
+          <div class="popup-content">
+            <strong>${name || 'TERRA Headquarters'}</strong>
+            <span style="font-size: 12px; color: #666;">We are located here. Visit us or contact us to learn about land opportunities.</span>
+            <div style="margin-top: 10px;">
+              ${phone ? `<a href="tel:${phone}" style="color: #3498db; font-size: 12px;">📞 ${phone}</a><br>` : ''}
+              ${email ? `<a href="mailto:${email}" style="color: #3498db; font-size: 12px;">📧 ${email}</a>` : ''}
+            </div>
           </div>
-        </div>
-      `);
-      hqMarker.openPopup();
-      
-      // Store with special ID so it can't be deleted
-      markers['__TERRA_HQ__'] = hqMarker;
+        `);
+        hqMarker.openPopup();
+        
+        // Store with special ID so it can't be deleted
+        markers['__TERRA_HQ__'] = hqMarker;
+      } catch (e) {
+        console.error('Failed to load company HQ:', e);
+      }
     }
 
     // Allow Enter key to search
