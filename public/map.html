@@ -11,12 +11,57 @@
     .map-controls {
       position: absolute;
       top: 10px;
-      right: 10px;
+      left: 10px;
       z-index: 1000;
       background: white;
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      max-width: 300px;
+    }
+    .map-search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      flex-direction: column;
+    }
+    .map-search input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      width: 100%;
+    }
+    .map-search button {
+      padding: 10px 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .map-search button:hover {
+      background: #2980b9;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 15px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+    .back-btn:hover {
+      background: #34495e;
     }
     .map-legend {
       position: absolute;
@@ -33,51 +78,81 @@
     .legend-color { width: 20px; height: 20px; border-radius: 50%; }
     .popup-content { font-size: 14px; }
     .popup-content strong { display: block; margin: 5px 0; }
+    .geolocation-btn {
+      padding: 10px 12px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.3s;
+    }
+    .geolocation-btn:hover {
+      background: #229954;
+    }
+    .filter-section {
+      margin-bottom: 15px;
+    }
+    .filter-section label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .filter-section select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <h1 class="logo">🌍 TERRA — Land Map</h1>
-      <div class="nav-buttons">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="lo">LO</button>
-        <button class="lang-btn" data-lang="th">TH</button>
-        <a href="index.html" class="nav-link">← Back to Home</a>
-      </div>
-    </div>
-  </nav>
-
   <div id="map"></div>
 
   <div class="map-controls">
-    <h3>Search</h3>
-    <select id="typeFilter">
-      <option value="">All Types</option>
-      <option value="agricultural">🌾 Agricultural</option>
-      <option value="residential">🏠 Residential</option>
-      <option value="commercial">🏪 Commercial</option>
-      <option value="industrial">🏭 Industrial</option>
-      <option value="investment">💰 Investment</option>
-      <option value="roadside">🛣️ Roadside</option>
-      <option value="forest">🌲 Forest</option>
-      <option value="empty">📍 Empty</option>
-    </select>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+    
+    <h3 style="font-size: 14px; margin-bottom: 12px; color: #2c3e50;">Search & Location</h3>
+    
+    <div class="map-search">
+      <input type="text" id="citySearch" placeholder="Search city or location..." />
+      <button onclick="searchCity()">🔍 Search</button>
+      <button class="geolocation-btn" onclick="getMyLocation()">📍 My Location</button>
+    </div>
+
+    <div class="filter-section">
+      <label for="typeFilter">Filter by Type:</label>
+      <select id="typeFilter" onchange="filterByType()">
+        <option value="">All Types</option>
+        <option value="agricultural">🌾 Agricultural</option>
+        <option value="residential">🏠 Residential</option>
+        <option value="commercial">🏪 Commercial</option>
+        <option value="industrial">🏭 Industrial</option>
+        <option value="investment">💰 Investment</option>
+        <option value="roadside">🛣️ Roadside</option>
+        <option value="forest">🌲 Forest</option>
+        <option value="empty">📍 Empty</option>
+      </select>
+    </div>
   </div>
 
   <div class="map-legend">
-    <h4>Legend</h4>
+    <h4 style="font-size: 13px; margin-bottom: 10px;">Legend</h4>
     <div class="legend-item">
       <div class="legend-color" style="background: #2ecc71;"></div>
-      <span>Available</span>
+      <span style="font-size: 13px;">Available</span>
     </div>
     <div class="legend-item">
       <div class="legend-color" style="background: #f39c12;"></div>
-      <span>Reserved</span>
+      <span style="font-size: 13px;">Reserved</span>
     </div>
     <div class="legend-item">
       <div class="legend-color" style="background: #e74c3c;"></div>
-      <span>Sold</span>
+      <span style="font-size: 13px;">Sold</span>
     </div>
   </div>
 
@@ -87,6 +162,7 @@
   <script>
     let map;
     let markers = {};
+    let userMarker = null;
     const statusColors = {
       available: '#2ecc71',
       reserved: '#f39c12',
@@ -94,7 +170,7 @@
       pending: '#95a5a6'
     };
 
-    // Initialize map (centered on Southeast Asia)
+    // Initialize map
     function initMap() {
       map = L.map('map').setView([15.8700, 100.9925], 6);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -105,12 +181,76 @@
       loadLands();
     }
 
-    // Load all lands and display markers
+    // Get user's current location
+    function getMyLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            map.setView([latitude, longitude], 12);
+            
+            // Remove old user marker if exists
+            if (userMarker) {
+              map.removeLayer(userMarker);
+            }
+            
+            // Add user location marker
+            userMarker = L.circleMarker([latitude, longitude], {
+              radius: 8,
+              fillColor: '#3498db',
+              color: '#fff',
+              weight: 3,
+              opacity: 1,
+              fillOpacity: 0.8
+            }).addTo(map).bindPopup('📍 Your Location');
+            
+            userMarker.openPopup();
+          },
+          (error) => {
+            alert('Unable to get your location: ' + error.message);
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by your browser');
+      }
+    }
+
+    // Search city
+    async function searchCity() {
+      const city = document.getElementById('citySearch').value.trim();
+      if (!city) {
+        alert('Please enter a city name');
+        return;
+      }
+
+      try {
+        // Use OpenStreetMap Nominatim for geocoding
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json`);
+        const data = await response.json();
+        
+        if (data.length === 0) {
+          alert('City not found. Try another search.');
+          return;
+        }
+
+        const { lat, lon, display_name } = data[0];
+        map.setView([lat, lon], 10);
+        
+        // Clear previous search marker
+        if (userMarker) map.removeLayer(userMarker);
+        
+        userMarker = L.marker([lat, lon]).addTo(map).bindPopup(`📍 ${display_name}`);
+        userMarker.openPopup();
+      } catch (e) {
+        alert('Error searching city: ' + e.message);
+      }
+    }
+
+    // Load all lands
     async function loadLands() {
       try {
         const lands = await apiCall('/api/lands?status=all');
         
-        // Clear existing markers
         Object.values(markers).forEach(marker => map.removeLayer(marker));
         markers = {};
 
@@ -120,21 +260,15 @@
           const [lng, lat] = land.coordinates.coordinates;
           const color = statusColors[land.status] || '#95a5a6';
           
-          // Create custom icon
           const icon = L.divIcon({
-            html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
-              📍
-            </div>`,
-            iconSize: [30, 30],
-            className: 'land-marker'
+            html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">📍</div>`,
+            iconSize: [30, 30]
           });
 
           const marker = L.marker([lat, lng], { icon }).addTo(map);
           
-          // Popup content
           const title = land.title[Lang.current] || land.title.en;
           const location = land.location[Lang.current] || land.location.en;
-          const desc = land.description[Lang.current] || land.description.en;
           
           const popupHTML = `
             <div class="popup-content">
@@ -143,7 +277,7 @@
               <span>💰 ${land.price?.toLocaleString()} THB</span>
               <span>📐 ${land.area}</span>
               <span>Status: ${land.status}</span>
-              ${land.status !== 'pending' ? `<a href="index.html?id=${land._id}" style="color: #3498db; text-decoration: none;">View Details →</a>` : '<span style="color: #95a5a6;">Pending Approval</span>'}
+              ${land.status !== 'pending' ? `<a href="index.html?id=${land._id}" style="color: #3498db; text-decoration: none; display: block; margin-top: 5px;">View Details →</a>` : '<span style="color: #95a5a6; display: block; margin-top: 5px;">Pending Approval</span>'}
             </div>
           `;
           
@@ -156,9 +290,9 @@
     }
 
     // Filter by type
-    document.getElementById('typeFilter').addEventListener('change', async (e) => {
+    async function filterByType() {
       try {
-        const type = e.target.value;
+        const type = document.getElementById('typeFilter').value;
         const query = type ? `/api/lands?type=${type}&status=all` : '/api/lands?status=all';
         const lands = await apiCall(query);
         
@@ -198,10 +332,15 @@
       } catch (e) {
         console.error('Error filtering lands:', e);
       }
-    });
+    }
 
-    // Initialize on page load
-    initMap();
+    // Allow Enter key to search
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('citySearch').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchCity();
+      });
+      initMap();
+    });
   </script>
 </body>
 </html>
