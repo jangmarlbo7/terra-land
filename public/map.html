@@ -50,18 +50,22 @@
       align-items: center;
       gap: 6px;
       padding: 10px 15px;
-      background: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 4px;
+      background: #0d0d0d;
+      color: #f3f2ee;
+      border: 1px solid #0d0d0d;
+      border-radius: 2px;
       cursor: pointer;
-      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
       text-decoration: none;
       margin-bottom: 10px;
       transition: all 0.3s;
     }
     .back-btn:hover {
-      background: #34495e;
+      background: transparent;
+      color: #0d0d0d;
     }
     .map-legend {
       position: absolute;
@@ -114,7 +118,7 @@
   <div id="map"></div>
 
   <div class="map-controls">
-    <a href="index.html" class="back-btn">← Back to Home</a>
+    <a href="index.html" class="back-btn"><img src="/icon/loction.svg" alt="back" style="width: 14px; height: 14px; transform: rotate(180deg);"> Back to Home</a>
     
     <h3 style="font-size: 14px; margin-bottom: 12px; color: #2c3e50;">Search & Location</h3>
     
@@ -142,6 +146,10 @@
 
   <div class="map-legend">
     <h4 style="font-size: 13px; margin-bottom: 10px;">Legend</h4>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #0d0d0d;"></div>
+      <span style="font-size: 13px;">Our Location</span>
+    </div>
     <div class="legend-item">
       <div class="legend-color" style="background: #2ecc71;"></div>
       <span style="font-size: 13px;">Available</span>
@@ -179,6 +187,7 @@
       }).addTo(map);
 
       loadLands();
+      loadCompanyHQ();
     }
 
     // Get user's current location
@@ -332,6 +341,32 @@
       } catch (e) {
         console.error('Error filtering lands:', e);
       }
+    }
+
+    // Load company headquarters marker
+    function loadCompanyHQ() {
+      const hqIcon = L.divIcon({
+        html: `<div style="background-color: #0d0d0d; width: 35px; height: 35px; border-radius: 50%; border: 3px solid #b8860b; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">★</div>`,
+        iconSize: [35, 35]
+      });
+
+      // TERRA Headquarters - Vientiane, Laos
+      const hqMarker = L.marker([17.9757, 102.6331], { icon: hqIcon }).addTo(map);
+      hqMarker.bindPopup(`
+        <div class="popup-content">
+          <strong>TERRA Headquarters</strong>
+          <span>Vientiane, Laos</span>
+          <span style="font-size: 12px; color: #666;">We are located here. Visit us or contact us to learn about land opportunities.</span>
+          <div style="margin-top: 10px;">
+            <a href="tel:+85620528770575" style="color: #3498db; font-size: 12px;">📞 +856 20 52877075</a><br>
+            <a href="mailto:info@terra-land.com" style="color: #3498db; font-size: 12px;">📧 info@terra-land.com</a>
+          </div>
+        </div>
+      `);
+      hqMarker.openPopup();
+      
+      // Store with special ID so it can't be deleted
+      markers['__TERRA_HQ__'] = hqMarker;
     }
 
     // Allow Enter key to search
