@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — TERRA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">TERRA<span>.</span></div>
+    <div class="login-sub">// Admin Panel</div>
+    <div class="fg">
+      <label class="fl">Password</label>
+      <input class="fi" id="login-pw" type="password" placeholder="Enter admin password" autocomplete="current-password">
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <button class="btn pri full" onclick="doLogin()">Sign In →</button>
+    <div style="margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid var(--bd)">
+      <a href="/" style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);letter-spacing:.12em">← Back to public site</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN LAYOUT ═══ -->
+<div class="admin-layout" id="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">TERRA<span>.</span></div>
+
+    <div class="sb-sec">Main</div>
+    <ul class="sb-nav">
+      <li>
+        <a href="#" id="sbn-dashboard" class="active" onclick="switchPanel('dashboard');return false">
+          <span class="sb-icon">◈</span> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="#" id="sbn-listings" onclick="switchPanel('listings');return false">
+          <span class="sb-icon">◻</span> All Listings
+        </a>
+      </li>
+    </ul>
+
+    <div class="sb-sec">Actions</div>
+    <ul class="sb-nav">
+      <li>
+        <a href="#" onclick="openAdd();return false">
+          <span class="sb-icon">+</span> Add Listing
+        </a>
+      </li>
+      <li>
+        <a href="/" target="_blank">
+          <span class="sb-icon">↗</span> View Public Site
+        </a>
+      </li>
+    </ul>
+
+    <div class="sb-foot">
+      <div class="sb-user">Logged in as Admin</div>
+      <button class="btn ghost sm" onclick="doLogout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="main-header">
+      <div class="main-header-title" id="main-header-title">Dashboard</div>
+      <button class="btn pri sm" onclick="openAdd()">+ Add Listing</button>
+    </div>
+
+    <div class="main-body">
+
+      <!-- ══ DASHBOARD PANEL ══ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-card-num" id="stat-total">—</span>
+            <span class="stat-card-label">Total Listings</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-num" id="stat-avail">—</span>
+            <span class="stat-card-label">Available</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-num" id="stat-sold">—</span>
+            <span class="stat-card-label">Sold</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-num" id="stat-val">—</span>
+            <span class="stat-card-label">Portfolio Value</span>
+          </div>
+        </div>
+
+        <div class="sec-title">Recent Listings</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title / Location</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody id="recent-tbody">
+              <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:1.25rem">
+          <button class="btn ghost sm" onclick="switchPanel('listings')">View All →</button>
+        </div>
+      </div>
+
+      <!-- ══ LISTINGS PANEL ══ -->
+      <div class="panel" id="panel-listings">
+        <div style="display:flex;gap:8px;margin-bottom:1.1rem;flex-wrap:wrap;align-items:center">
+          <input class="fi" id="a-search" type="text" placeholder="Search title or location…" style="flex:1;min-width:160px">
+          <select class="fi" id="a-type" style="min-width:140px">
+            <option value="">All Types</option>
+            <option value="agricultural">Agricultural</option>
+            <option value="residential">Residential</option>
+            <option value="commercial">Commercial</option>
+            <option value="industrial">Industrial</option>
+            <option value="forest">Forest</option>
+            <option value="roadside">Roadside</option>
+            <option value="investment">Investment</option>
+            <option value="empty">Empty Land</option>
+            <option value="other">Other</option>
+          </select>
+          <select class="fi" id="a-status" style="min-width:130px">
+            <option value="">All Status</option>
+            <option value="available">Available</option>
+            <option value="reserved">Reserved</option>
+            <option value="sold">Sold</option>
+          </select>
+          <button class="btn pri sm" onclick="openAdd()">+ Add</button>
+        </div>
+        <div style="text-align:right;margin-bottom:.6rem">
+          <span id="table-count" style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);letter-spacing:.12em"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title / Location</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Area</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="listings-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /main-body -->
+  </div><!-- /main-content -->
+</div><!-- /admin-layout -->
+
+
+<!-- ═══ ADD / EDIT MODAL ═══ -->
+<div class="modal-overlay" id="form-modal">
+  <div class="modal">
+    <div class="mh">
+      <span class="m-title" id="form-modal-title">Add Listing</span>
+      <button class="mclose" onclick="closeModal('form-modal')">✕</button>
+    </div>
+    <div class="mb">
+      <form id="land-form" onsubmit="return false">
+
+        <!-- Multilingual content -->
+        <div class="sec-title">Multilingual Content</div>
+        <div class="ltabs">
+          <button type="button" class="ltab active" data-lang="en" onclick="switchLangTab('en')">English</button>
+          <button type="button" class="ltab" data-lang="lo" onclick="switchLangTab('lo')">ລາວ</button>
+          <button type="button" class="ltab" data-lang="th" onclick="switchLangTab('th')">ไทย</button>
+        </div>
+
+        <!-- EN -->
+        <div class="lp active" data-lang="en">
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="fl">Title (English) <span class="req">*</span></label>
+              <input class="fi" id="f-title-en" type="text" placeholder="e.g. Riverside Agricultural Plot">
+            </div>
+            <div class="fg full">
+              <label class="fl">Location (English) <span class="req">*</span></label>
+              <input class="fi" id="f-loc-en" type="text" placeholder="District, Province">
+            </div>
+            <div class="fg full">
+              <label class="fl">Description (English)</label>
+              <textarea class="fi" id="f-desc-en" placeholder="Describe the land, access roads, surroundings…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- LO -->
+        <div class="lp" data-lang="lo">
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="fl">ຊື່ (ລາວ)</label>
+              <input class="fi" id="f-title-lo" type="text" placeholder="ຊື່ທີ່ດິນ">
+            </div>
+            <div class="fg full">
+              <label class="fl">ສະຖານທີ່ (ລາວ)</label>
+              <input class="fi" id="f-loc-lo" type="text" placeholder="ເມືອງ, ແຂວງ">
+            </div>
+            <div class="fg full">
+              <label class="fl">ລາຍລະອຽດ (ລາວ)</label>
+              <textarea class="fi" id="f-desc-lo" placeholder="ລາຍລະອຽດທີ່ດິນ…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- TH -->
+        <div class="lp" data-lang="th">
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="fl">ชื่อ (ไทย)</label>
+              <input class="fi" id="f-title-th" type="text" placeholder="ชื่อที่ดิน">
+            </div>
+            <div class="fg full">
+              <label class="fl">ที่ตั้ง (ไทย)</label>
+              <input class="fi" id="f-loc-th" type="text" placeholder="อำเภอ, จังหวัด">
+            </div>
+            <div class="fg full">
+              <label class="fl">รายละเอียด (ไทย)</label>
+              <textarea class="fi" id="f-desc-th" placeholder="รายละเอียดที่ดิน…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Listing details -->
+        <div class="sec-title" style="margin-top:1.75rem">Listing Details</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label class="fl">Price (฿) <span class="req">*</span></label>
+            <input class="fi" id="f-price" type="number" min="0" placeholder="0">
+          </div>
+          <div class="fg">
+            <label class="fl">Area <span class="req">*</span></label>
+            <input class="fi" id="f-area" type="text" placeholder="e.g. 10 Rai / 400 sq.wah">
+          </div>
+          <div class="fg">
+            <label class="fl">Land Type <span class="req">*</span></label>
+            <select class="fi" id="f-type">
+              <option value="">Select type</option>
+              <option value="agricultural">Agricultural</option>
+              <option value="residential">Residential</option>
+              <option value="commercial">Commercial</option>
+              <option value="industrial">Industrial</option>
+              <option value="forest">Forest</option>
+              <option value="roadside">Roadside</option>
+              <option value="investment">Investment</option>
+              <option value="empty">Empty Land</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Status</label>
+            <select class="fi" id="f-status">
+              <option value="available">Available</option>
+              <option value="reserved">Reserved</option>
+              <option value="sold">Sold</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Featured</label>
+            <select class="fi" id="f-featured">
+              <option value="false">No</option>
+              <option value="true">Yes — show in featured section</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Title Deed</label>
+            <input class="fi" id="f-deed" type="text" placeholder="e.g. Chanote / ໂຉນ / โฉนด">
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="sec-title" style="margin-top:1.75rem">Contact Info</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label class="fl">Agent / Owner Name</label>
+            <input class="fi" id="f-contact" type="text">
+          </div>
+          <div class="fg">
+            <label class="fl">Phone</label>
+            <input class="fi" id="f-phone" type="tel" placeholder="+856 / +66 …">
+          </div>
+        </div>
+
+        <!-- Images -->
+        <div class="sec-title" style="margin-top:1.75rem">Images</div>
+        <div class="fgrid">
+          <div class="fg full">
+            <label class="fl">Upload Images</label>
+            <input class="fi" id="f-image-files" type="file" multiple accept="image/*">
+            <div class="fhint">Select one or more images from your PC (jpg, png, gif, webp)</div>
+          </div>
+          <div class="fg full">
+            <label class="fl">Existing Image URLs (optional)</label>
+            <textarea class="fi" id="f-image-urls" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="min-height:72px"></textarea>
+            <div class="fhint">Paste full image URLs, one per line (will be added to uploaded images)</div>
+          </div>
+        </div>
+        <div id="upload-progress" style="display:none;margin-top:1rem">
+          <div style="font-size:0.75rem;color:var(--mid);margin-bottom:0.5rem">Uploading...</div>
+          <div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden">
+            <div id="upload-progress-bar" style="height:100%;background:var(--link);width:0%;transition:width 0.3s ease"></div>
+          </div>
+        </div>
+        <div id="uploaded-images" style="margin-top:1rem">
+          <!-- Existing images will be listed here -->
+        </div>
+
+      </form>
+    </div>
+    <div class="mfooter">
+      <span class="ferr" id="form-err"></span>
+      <button class="btn ghost sm" onclick="closeModal('form-modal')">Cancel</button>
+      <button class="btn pri sm" id="save-btn" onclick="saveListing()">Save Listing →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ DELETE MODAL ═══ -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal sm">
+    <div class="mh">
+      <span class="m-title">Confirm Delete</span>
+      <button class="mclose" onclick="closeModal('delete-modal')">✕</button>
+    </div>
+    <div class="mb">
+      <p style="font-size:.86rem;color:var(--mid);line-height:1.75;margin-bottom:1.5rem">
+        Permanently delete <strong id="delete-name" style="color:var(--ink)"></strong>?
+        This action cannot be undone.
+      </p>
+    </div>
+    <div class="mfooter">
+      <button class="btn ghost sm" onclick="closeModal('delete-modal')">Cancel</button>
+      <button class="btn danger sm" id="confirm-delete-btn" onclick="doDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/admin/js/admin.js"></script>
+</body>
+</html>

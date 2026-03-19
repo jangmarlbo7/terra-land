@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TERRA — Premium Land for Sale</title>
+  <meta name="description" content="Premium land marketplace in Laos. Verified listings, direct contact with owners.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── 1. HERO ── */
+    .hero {
+      position: relative;
+      min-height: 90vh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; }
+    .hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.3) 55%, rgba(0,0,0,.08) 100%);
+    }
+    .hero-body {
+      position: relative; z-index: 2;
+      padding: 3.5rem 2.5rem;
+      max-width: 700px;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(255,255,255,.6); margin-bottom: 1.2rem;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+      font-weight: 900; line-height: 0.95;
+      color: #fff; margin-bottom: 1.25rem;
+    }
+    .hero-title i { font-style: italic; color: rgba(255,255,255,.65); }
+    .hero-sub {
+      font-size: 0.92rem; color: rgba(255,255,255,.7);
+      line-height: 1.8; max-width: 460px; margin-bottom: 2.5rem;
+    }
+    .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .hero-stats {
+      position: absolute; bottom: 0; right: 0; z-index: 2;
+      display: flex; border-top: 1px solid rgba(255,255,255,.12);
+      border-left: 1px solid rgba(255,255,255,.12);
+    }
+    .h-stat {
+      padding: 1.25rem 1.75rem;
+      border-right: 1px solid rgba(255,255,255,.12);
+    }
+    .h-stat:last-child { border-right: none; }
+    .h-stat-n {
+      font-family: 'Playfair Display', serif; font-size: 1.8rem;
+      font-weight: 700; color: #fff; display: block; line-height: 1;
+    }
+    .h-stat-l {
+      font-family: 'DM Mono', monospace; font-size: 0.52rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,.45); margin-top: 0.25rem;
+    }
+
+    /* ── 2. SEARCH ── */
+    .search-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--bd);
+      padding: 1.75rem 2.5rem;
+    }
+    .search-label {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--mid); margin-bottom: 1rem;
+    }
+    .search-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
+      gap: 2px;
+    }
+    .sf-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .sf-label {
+      font-family: 'DM Mono', monospace; font-size: 0.55rem;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim);
+    }
+    .sf-input, .sf-select {
+      background: var(--s2); border: 1px solid var(--bd);
+      color: var(--ink); padding: 0.68rem 0.9rem;
+      font-family: 'Barlow', sans-serif; font-size: 0.85rem;
+      font-weight: 300; outline: none; transition: border-color .2s;
+      -webkit-appearance: none; width: 100%;
+    }
+    .sf-input:focus, .sf-select:focus { border-color: var(--ink); }
+    .sf-input::placeholder { color: var(--dim); }
+    .sf-select option { background: var(--surface); }
+    .sf-btn-wrap { display: flex; flex-direction: column; gap: 0.35rem; }
+    .sf-btn-wrap .btn { align-self: flex-end; height: 100%; }
+
+    /* ── 3. LISTINGS ── */
+    .listings-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding-bottom: 1.5rem; margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--bd);
+    }
+    .listings-count {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid);
+    }
+    .empty-state {
+      grid-column: 1/-1; text-align: center;
+      padding: 5rem 1rem; border: 1px solid var(--bd);
+      background: var(--surface);
+    }
+
+    /* ── 4. CATEGORIES ── */
+    .cat-section { background: var(--ink); padding: 0; }
+    .cat-header {
+      padding: 2.5rem 2.5rem 1.75rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .cat-header .tag-label { color: rgba(255,255,255,.35); }
+    .cat-header .section-title { color: #fff; }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .cat-card {
+      position: relative; height: 240px; overflow: hidden; cursor: pointer;
+    }
+    .cat-card img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(.5);
+      transition: transform .6s var(--ease), filter .4s;
+    }
+    .cat-card:hover img { transform: scale(1.07); filter: brightness(.38); }
+    .cat-overlay { position: absolute; inset: 0; }
+    .cat-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.5rem;
+    }
+    .cat-name {
+      font-family: 'Playfair Display', serif; font-size: 1.15rem;
+      font-weight: 700; color: #fff; margin-bottom: 0.3rem;
+    }
+    .cat-count {
+      font-family: 'DM Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+    }
+    .cat-arrow {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,.65); font-size: 0.9rem;
+      transition: all .3s;
+    }
+    .cat-card:hover .cat-arrow {
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.65);
+    }
+
+    /* ── 5. WHY ── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .why-card { padding: 2.5rem; border: 1px solid var(--bd); }
+    .why-icon {
+      width: 48px; height: 48px;
+      border: 1px solid var(--bd);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 1.25rem;
+    }
+    .why-title {
+      font-family: 'Playfair Display', serif; font-size: 1.05rem;
+      font-weight: 700; margin-bottom: 0.65rem;
+    }
+    .why-desc { font-size: 0.82rem; color: var(--mid); line-height: 1.75; }
+
+    /* ── 6. HOW IT WORKS ── */
+    .hiw-section { background: var(--bg); }
+    .hiw-steps {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; position: relative;
+    }
+    .hiw-steps::before {
+      content: ''; position: absolute;
+      top: 27px; left: 8%; right: 8%; height: 1px;
+      background: var(--bd); z-index: 0;
+    }
+    .step { padding: 0 1.5rem 0; text-align: center; position: relative; z-index: 1; }
+    .step-num {
+      width: 54px; height: 54px;
+      border: 1px solid var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700;
+      background: var(--bg); color: var(--ink);
+    }
+    .step-title {
+      font-family: 'Playfair Display', serif; font-size: 1rem;
+      font-weight: 700; margin-bottom: 0.5rem;
+    }
+    .step-desc { font-size: 0.78rem; color: var(--mid); line-height: 1.7; }
+
+    /* ── 7. CONTACT ── */
+    .contact-section { background: var(--ink); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .contact-info {
+      padding: 4rem 3rem;
+      border-right: 1px solid rgba(255,255,255,.08);
+    }
+    .contact-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(255,255,255,.35); margin-bottom: 1rem;
+    }
+    .contact-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      color: #fff; margin-bottom: 0.75rem;
+    }
+    .contact-sub {
+      font-size: 0.88rem; color: rgba(255,255,255,.5);
+      line-height: 1.8; margin-bottom: 2.5rem;
+    }
+    .contact-methods { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
+    .cm {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid rgba(255,255,255,.1);
+      transition: border-color .2s; cursor: pointer;
+    }
+    .cm:hover { border-color: rgba(255,255,255,.3); }
+    .cm-icon {
+      width: 38px; height: 38px;
+      border: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0; color: #fff;
+    }
+    .cm-label {
+      font-family: 'DM Mono', monospace; font-size: 0.54rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,.35); margin-bottom: 0.2rem;
+    }
+    .cm-val { font-size: 0.9rem; color: #fff; }
+    .chat-btn {
+      display: flex; align-items: center; gap: 0.75rem;
+      width: 100%; padding: 1rem 1.5rem;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      color: #fff; font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s;
+    }
+    .chat-btn:hover { background: rgba(255,255,255,.13); }
+    .contact-form-wrap { padding: 4rem 3rem; }
+
+    /* ── 8. ABOUT ── */
+    .about-section { background: var(--surface); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 400px; }
+    .about-img { overflow: hidden; background: var(--s2); }
+    .about-img img { width: 100%; height: 100%; object-fit: cover; }
+    .about-content {
+      padding: 4rem 3rem;
+      display: flex; flex-direction: column; justify-content: center;
+      border-left: 1px solid var(--bd);
+    }
+    .about-tag {
+      font-family: 'DM Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--mid); margin-bottom: 1rem;
+    }
+    .about-title {
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      margin-bottom: 1.25rem;
+    }
+    .about-text { font-size: 0.86rem; color: var(--mid); line-height: 1.85; margin-bottom: 1.75rem; }
+    .about-numbers {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0; border: 1px solid var(--bd); margin-top: 1.5rem;
+    }
+    .an { padding: 1.1rem; border-right: 1px solid var(--bd); }
+    .an:last-child { border-right: none; }
+    .an-n {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      font-weight: 700; display: block; margin-bottom: 0.2rem;
+    }
+    .an-l {
+      font-family: 'DM Mono', monospace; font-size: 0.52rem;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid);
+    }
+
+    /* ── 9. MAP ── */
+    .map-section { background: var(--ink); padding: 0; }
+    .map-header {
+      padding: 2rem 2.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .map-header-title { font-size: clamp(1.4rem,2vw,1.8rem); color: #fff; margin-bottom: 0.25rem; }
+    .map-header-sub {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.15em; color: rgba(255,255,255,.35);
+    }
+    .map-wrap { display: grid; grid-template-columns: 1fr 280px; min-height: 400px; }
+    .map-canvas {
+      position: relative; overflow: hidden;
+      background: #141424;
+      border-right: 1px solid rgba(255,255,255,.07);
+    }
+    .map-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .map-road { position: absolute; background: rgba(255,255,255,.07); }
+    .map-road.h { height: 2px; left: 0; right: 0; }
+    .map-road.v { width: 2px; top: 0; bottom: 0; }
+    .map-road-label {
+      position: absolute;
+      font-family: 'DM Mono', monospace; font-size: 0.5rem;
+      letter-spacing: 0.1em; color: rgba(255,255,255,.18);
+      text-transform: uppercase;
+    }
+    .marker {
+      position: absolute; transform: translate(-50%,-50%); cursor: pointer;
+    }
+    .marker-dot {
+      width: 13px; height: 13px; border-radius: 50%;
+      background: #fff; border: 2px solid rgba(255,255,255,.3);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.08);
+      transition: transform .2s;
+    }
+    .marker:hover .marker-dot { transform: scale(1.35); }
+    .marker.main .marker-dot {
+      background: #d4a017; border-color: #f0c040;
+      width: 17px; height: 17px;
+      box-shadow: 0 0 0 6px rgba(212,160,23,.15);
+    }
+    .marker-tip {
+      position: absolute; bottom: 130%; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.95); color: var(--ink);
+      font-family: 'DM Mono', monospace; font-size: 0.52rem;
+      padding: 0.35rem 0.7rem; letter-spacing: 0.08em;
+      white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity .2s;
+    }
+    .marker:hover .marker-tip { opacity: 1; }
+    .map-legend {
+      position: absolute; bottom: 1rem; left: 1.25rem;
+      display: flex; gap: 1.25rem;
+    }
+    .leg-item { display: flex; align-items: center; gap: 0.4rem; }
+    .leg-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); }
+    .leg-dot.office { background: #d4a017; }
+    .leg-dot.land   { background: #fff; }
+    .leg-txt {
+      font-family: 'DM Mono', monospace; font-size: 0.5rem;
+      letter-spacing: 0.1em; color: rgba(255,255,255,.4);
+    }
+    .map-sidebar { padding: 1.5rem; overflow-y: auto; }
+    .map-sidebar-title {
+      font-family: 'DM Mono', monospace; font-size: 0.56rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,.35); margin-bottom: 1.25rem;
+    }
+    .map-loc-item {
+      padding: 0.85rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      cursor: pointer; transition: padding-left .2s;
+    }
+    .map-loc-item:last-child { border-bottom: none; }
+    .map-loc-item:hover { padding-left: 0.5rem; }
+    .map-loc-name { font-size: 0.82rem; color: #fff; margin-bottom: 0.2rem; }
+    .map-loc-meta { font-family: 'DM Mono', monospace; font-size: 0.56rem; letter-spacing: 0.08em; color: rgba(255,255,255,.35); }
+    .map-loc-item.active .map-loc-name { color: #d4a017; }
+
+    /* DETAIL MODAL extras */
+    .modal-wide { max-width: 640px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .search-grid { grid-template-columns: 1fr 1fr; }
+      .cat-grid { grid-template-columns: 1fr 1fr; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+      .hiw-steps { grid-template-columns: 1fr 1fr; }
+      .hiw-steps::before { display: none; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-info { border-right: none; border-bottom: 1px solid rgba(255,255,255,.08); }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-img { height: 260px; }
+      .about-content { border-left: none; border-top: 1px solid var(--bd); }
+      .map-wrap { grid-template-columns: 1fr; }
+      .map-canvas { min-height: 320px; }
+      .map-sidebar { border-top: 1px solid rgba(255,255,255,.07); }
+    }
+    @media (max-width: 768px) {
+      .hero-body { padding: 2.5rem 1.5rem; }
+      .hero-stats { position: static; border: none; border-top: 1px solid rgba(255,255,255,.12); }
+      .hero { flex-direction: column; min-height: auto; }
+      .search-bar { padding: 1.5rem; }
+      .search-grid { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: 1fr 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .contact-info { padding: 2.5rem 1.5rem; }
+      .contact-form-wrap { padding: 2.5rem 1.5rem; }
+      .about-content { padding: 2.5rem 1.5rem; }
+      .map-header { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <a class="nav-logo" href="/">TERRA<em>.</em></a>
+  <ul class="nav-links">
+    <li><a href="#listings-section" data-i18n="nav_listings"></a></li>
+    <li><a href="#cat-section" data-i18n="nav_cat"></a></li>
+    <li><a href="#why-section" data-i18n="nav_why"></a></li>
+    <li><a href="#contact-section" data-i18n="nav_contact"></a></li>
+    <li><a href="#about-section" data-i18n="nav_about"></a></li>
+    <li><a href="/admin" style="color:var(--dim)">Admin</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="lo">ລາວ</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="th">ไทย</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ 1. HERO ═══ -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80" alt="Land">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-body">
+    <div class="hero-eyebrow" data-i18n="hero_eyebrow"></div>
+    <h1 class="hero-title" data-i18n="hero_title" data-i18n-html></h1>
+    <p class="hero-sub" data-i18n="hero_sub"></p>
+    <div class="hero-btns">
+      <a href="#listings-section" class="btn btn-white-fill" data-i18n="hero_btn1"></a>
+      <a href="#contact-section"  class="btn btn-white"     data-i18n="hero_btn2"></a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="h-stat">
+      <span class="h-stat-n" id="stat-plots">—</span>
+      <span class="h-stat-l" data-i18n="hs_plots"></span>
+    </div>
+    <div class="h-stat">
+      <span class="h-stat-n">8</span>
+      <span class="h-stat-l" data-i18n="hs_prov"></span>
+    </div>
+    <div class="h-stat">
+      <span class="h-stat-n">15+</span>
+      <span class="h-stat-l" data-i18n="hs_exp"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 2. SEARCH ═══ -->
+<section class="search-bar" id="search-section">
+  <div class="search-label" data-i18n="s_heading"></div>
+  <div class="search-grid">
+    <div class="sf-group">
+      <label class="sf-label" data-i18n="sf_loc"></label>
+      <input class="sf-input" id="sf-loc" type="text" data-i18n-ph="sf_loc_ph">
+    </div>
+    <div class="sf-group">
+      <label class="sf-label" data-i18n="sf_price"></label>
+      <select class="sf-select" id="sf-price"></select>
+    </div>
+    <div class="sf-group">
+      <label class="sf-label" data-i18n="sf_size"></label>
+      <select class="sf-select" id="sf-size"></select>
+    </div>
+    <div class="sf-group">
+      <label class="sf-label" data-i18n="sf_type"></label>
+      <select class="sf-select" id="sf-type"></select>
+    </div>
+    <div class="sf-btn-wrap">
+      <label class="sf-label">&nbsp;</label>
+      <button class="btn btn-primary" onclick="doSearch()" data-i18n="s_btn"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3. FEATURED LISTINGS ═══ -->
+<section class="section" id="listings-section" style="background:var(--bg)">
+  <div class="listings-header">
+    <div>
+      <div class="tag-label" data-i18n="fl_tag"></div>
+      <h2 class="section-title" data-i18n="fl_title"></h2>
+    </div>
+    <span class="listings-count" id="listings-count"></span>
+  </div>
+  <div class="land-grid" id="listings-grid"></div>
+  <div style="text-align:center;margin-top:2.5rem">
+    <button class="btn" id="btn-more" onclick="toggleMore()" data-i18n="fl_more"></button>
+  </div>
+</section>
+
+<!-- ═══ 4. CATEGORIES ═══ -->
+<section class="cat-section" id="cat-section">
+  <div class="cat-header">
+    <div class="tag-label" data-i18n="cat_tag"></div>
+    <h2 class="section-title" data-i18n="cat_title"></h2>
+  </div>
+  <div class="cat-grid" id="cat-grid"></div>
+</section>
+
+<!-- ═══ 5. WHY CHOOSE US ═══ -->
+<section class="section" id="why-section" style="background:var(--surface)">
+  <div class="section-header">
+    <div class="tag-label" data-i18n="why_tag"></div>
+    <h2 class="section-title" data-i18n="why_title"></h2>
+    <p class="section-sub" data-i18n="why_sub"></p>
+  </div>
+  <div class="why-grid" id="why-grid"></div>
+</section>
+
+<!-- ═══ 6. HOW IT WORKS ═══ -->
+<section class="section hiw-section" id="hiw-section">
+  <div class="section-header">
+    <div class="tag-label" data-i18n="hiw_tag"></div>
+    <h2 class="section-title" data-i18n="hiw_title"></h2>
+  </div>
+  <div class="hiw-steps" id="hiw-steps"></div>
+</section>
+
+<!-- ═══ 7. CONTACT ═══ -->
+<section class="contact-section" id="contact-section">
+  <div class="contact-grid">
+    <!-- Info -->
+    <div class="contact-info">
+      <div class="contact-eyebrow" data-i18n="c_tag"></div>
+      <h2 class="contact-title" data-i18n="c_title"></h2>
+      <p class="contact-sub" data-i18n="c_sub"></p>
+      <div class="contact-methods">
+        <div class="cm">
+          <div class="cm-icon">✆</div>
+          <div>
+            <div class="cm-label" data-i18n="c_phone_l"></div>
+            <div class="cm-val">+856 20 52877075</div>
+          </div>
+        </div>
+        <div class="cm">
+          <div class="cm-icon" style="font-family:'DM Mono',monospace;font-size:.75rem">FB</div>
+          <div>
+            <div class="cm-label">Facebook</div>
+            <div class="cm-val">jang.pmc.9</div>
+          </div>
+        </div>
+        <div class="cm">
+          <div class="cm-icon" style="font-family:'DM Mono',monospace;font-size:.7rem">WA</div>
+          <div>
+            <div class="cm-label">WhatsApp</div>
+            <div class="cm-val">+856 20 52877075</div>
+          </div>
+        </div>
+      </div>
+      <button class="chat-btn" onclick="showToast('Opening chat...')">
+        <span style="font-size:1.1rem">💬</span>
+        <span data-i18n="c_chat"></span>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <div class="contact-form-wrap inv">
+      <div class="form-group">
+        <label class="form-label" data-i18n="cf_name"></label>
+        <input class="form-input" id="cf-name" type="text">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="cf_email"></label>
+        <input class="form-input" id="cf-email" type="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="cf_phone"></label>
+        <input class="form-input" id="cf-phone" type="tel">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="cf_interest"></label>
+        <select class="form-select" id="cf-interest">
+          <option value="buy" data-i18n="cfi_buy"></option>
+          <option value="sell" data-i18n="cfi_sell"></option>
+          <option value="info" data-i18n="cfi_info"></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="cf_msg"></label>
+        <textarea class="form-textarea" id="cf-msg"></textarea>
+      </div>
+      <button class="btn btn-white-fill btn-full" onclick="submitContact()" data-i18n="cf_send"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 8. ABOUT ═══ -->
+<section class="about-section" id="about-section">
+  <div class="about-grid">
+    <div class="about-img">
+      <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=75" alt="Team" loading="lazy">
+    </div>
+    <div class="about-content">
+      <div class="about-tag" data-i18n="ab_tag"></div>
+      <h2 class="about-title" data-i18n="ab_title"></h2>
+      <p class="about-text" data-i18n="ab_text"></p>
+      <a href="#contact-section" class="btn btn-primary" data-i18n="ab_btn"></a>
+      <div class="about-numbers">
+        <div class="an">
+          <span class="an-n">15+</span>
+          <span class="an-l" data-i18n="an_years"></span>
+        </div>
+        <div class="an">
+          <span class="an-n">500+</span>
+          <span class="an-l" data-i18n="an_sold"></span>
+        </div>
+        <div class="an">
+          <span class="an-n">98%</span>
+          <span class="an-l" data-i18n="an_happy"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9. MAP ═══ -->
+<section class="map-section" id="map-section">
+  <div class="map-header">
+    <div>
+      <h2 class="map-header-title" data-i18n="map_title"></h2>
+      <div class="map-header-sub" data-i18n="map_sub"></div>
+    </div>
+    <button class="btn btn-white btn-sm" onclick="showToast('Opening map...')" data-i18n="map_dir"></button>
+  </div>
+  <div class="map-wrap">
+    <div class="map-canvas">
+      <div class="map-grid-bg"></div>
+      <!-- Roads -->
+      <div class="map-road h" style="top:38%"></div>
+      <div class="map-road h" style="top:64%"></div>
+      <div class="map-road v" style="left:30%"></div>
+      <div class="map-road v" style="left:66%"></div>
+      <!-- Road labels -->
+      <div class="map-road-label" style="top:34%;left:4%">Mekong Riverside Rd</div>
+      <div class="map-road-label" style="top:60%;left:4%">National Highway 13</div>
+      <!-- Markers -->
+      <div class="marker main" style="top:50%;left:48%">
+        <div class="marker-dot"></div>
+        <div class="marker-tip" id="mtt-hq"></div>
+      </div>
+      <div class="marker" style="top:28%;left:20%">
+        <div class="marker-dot"></div>
+        <div class="marker-tip" id="mtt-l1"></div>
+      </div>
+      <div class="marker" style="top:56%;left:60%">
+        <div class="marker-dot"></div>
+        <div class="marker-tip" id="mtt-l2"></div>
+      </div>
+      <div class="marker" style="top:72%;left:36%">
+        <div class="marker-dot"></div>
+        <div class="marker-tip" id="mtt-l3"></div>
+      </div>
+      <div class="marker" style="top:22%;left:72%">
+        <div class="marker-dot"></div>
+        <div class="marker-tip" id="mtt-l4"></div>
+      </div>
+      <!-- Legend -->
+      <div class="map-legend">
+        <div class="leg-item">
+          <div class="leg-dot office"></div>
+          <span class="leg-txt" data-i18n="leg_office"></span>
+        </div>
+        <div class="leg-item">
+          <div class="leg-dot land"></div>
+          <span class="leg-txt" data-i18n="leg_land"></span>
+        </div>
+      </div>
+    </div>
+    <!-- Sidebar -->
+    <div class="map-sidebar">
+      <div class="map-sidebar-title" data-i18n="map_sb"></div>
+      <div id="map-loc-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-logo">TERRA<em>.</em></div>
+  <p class="footer-text" data-i18n="footer_copy"></p>
+  <p class="footer-text" data-i18n="footer_note"></p>
+</footer>
+
+<!-- ═══ DETAIL MODAL ═══ -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <span class="modal-title" id="dm-title">—</span>
+      <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="dm-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/js/lang.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/home.js"></script>
+</body>
+</html>

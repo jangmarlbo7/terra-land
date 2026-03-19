@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — TERRA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@300;400;500&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .contact-layout {
+      display: grid; grid-template-columns: 1fr 1.3fr;
+      border: 1px solid var(--bd);
+      margin: 2.5rem;
+      animation: fadeUp .6s var(--ease) both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .ci { padding: 3.5rem 2.5rem; border-right: 1px solid var(--bd); background: var(--surface); }
+    .ci-tag { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.28em; text-transform:uppercase; color:var(--mid); margin-bottom:1rem; }
+    .ci-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,2.5vw,2.4rem); font-weight:700; margin-bottom:.75rem; line-height:1.05; }
+    .ci-sub { font-size:.88rem; color:var(--mid); line-height:1.8; margin-bottom:2.5rem; }
+    .cd { margin-bottom:1.5rem; }
+    .cd-l { font-family:'DM Mono',monospace; font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; color:var(--mid); margin-bottom:.35rem; }
+    .cd-v { font-size:.88rem; line-height:1.65; }
+    .cf-wrap { padding: 3.5rem 2.5rem; background: var(--s2); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:900px){
+      .contact-layout{ grid-template-columns:1fr; margin:1rem; }
+      .ci{ border-right:none; border-bottom:1px solid var(--bd); padding:2.5rem 1.5rem; }
+      .cf-wrap{ padding:2.5rem 1.5rem; }
+      .form-row{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-logo" href="/">TERRA<em>.</em></a>
+  <ul class="nav-links">
+    <li><a href="/" data-i18n="nav_home"></a></li>
+    <li><a href="/contact" class="active" data-i18n="nav_contact"></a></li>
+    <li><a href="/admin" style="color:var(--dim)">Admin</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="lo">ລາວ</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="th">ไทย</button>
+    </div>
+  </div>
+</nav>
+
+<div style="padding-top:.5rem">
+  <div class="contact-layout">
+    <div class="ci">
+      <div class="ci-tag" data-i18n="c_tag"></div>
+      <h1 class="ci-title" data-i18n="c_title"></h1>
+      <p class="ci-sub" data-i18n="c_sub"></p>
+      <div class="cd">
+        <div class="cd-l" data-i18n="c_phone_l"></div>
+        <div class="cd-v">+856 21 123 456</div>
+      </div>
+      <div class="cd">
+        <div class="cd-l">LINE ID</div>
+        <div class="cd-v">@terraland.la</div>
+      </div>
+      <div class="cd">
+        <div class="cd-l">WhatsApp</div>
+        <div class="cd-v">+856 20 9999 8888</div>
+      </div>
+      <div class="cd">
+        <div class="cd-l" data-i18n="hours_label" style="font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mid)">Hours</div>
+        <div class="cd-v">Mon – Sat · 08:00 – 17:00</div>
+      </div>
+    </div>
+    <div class="cf-wrap">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="cf_name"></label>
+          <input class="form-input" id="cf-name" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="cf_email"></label>
+          <input class="form-input" id="cf-email" type="email">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="cf_phone"></label>
+          <input class="form-input" id="cf-phone" type="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="cf_interest"></label>
+          <select class="form-select" id="cf-interest"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="cf_msg"></label>
+        <textarea class="form-textarea" id="cf-msg" style="min-height:130px"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" id="btn-send" data-i18n="cf_send"></button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-logo">TERRA<em>.</em></div>
+  <p class="footer-text" data-i18n="footer_copy"></p>
+  <p class="footer-text" data-i18n="footer_note"></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="/js/lang.js"></script>
+<script src="/js/contact.js"></script>
+</body>
+</html>
