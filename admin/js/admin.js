@@ -78,12 +78,17 @@ async function uploadImage(file) {
 // ── Load all lands (all statuses for admin) ──
 async function loadLands() {
   try {
-    const [avail, sold, res] = await Promise.all([
+    const [avail, sold, res, pending] = await Promise.all([
       apiReq('/lands?status=available'),
       apiReq('/lands?status=sold'),
-      apiReq('/lands?status=reserved')
+      apiReq('/lands?status=reserved'),
+      apiReq('/lands/pending')
     ]);
     lands = [...avail, ...sold, ...res];
+    
+    // Update pending count badge
+    document.getElementById('pending-count').innerText = pending.length;
+    
     renderDashboard();
     renderTable();
   } catch (e) {
@@ -164,9 +169,10 @@ function switchPanel(name) {
   document.querySelectorAll('.sb-nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('panel-' + name)?.classList.add('active');
   document.getElementById('sbn-' + name)?.classList.add('active');
-  const titles = { dashboard: 'Dashboard', listings: 'All Listings', add: 'Add Listing' };
+  const titles = { dashboard: 'Dashboard', listings: 'All Listings', pending: 'Pending Submissions', add: 'Add Listing' };
   tx('main-header-title', titles[name] || name);
   if (name === 'listings') renderTable();
+  if (name === 'pending') loadPendingSubmissions();
 }
 
 // ── Add modal ──
@@ -369,6 +375,63 @@ function gv(id) { return (document.getElementById(id) || {}).value || ''; }
 function sv(id, v) { const e = document.getElementById(id); if (e) e.value = v; }
 function tx(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Image handling ──
+async function loadPendingSubmissions() {
+  try {
+    const pending = await apiReq('/lands/pending');
+    document.getElementById('pending-count').innerText = pending.length;
+    renderPendingTable(pending);
+  } catch (e) {
+    toast('Error loading pending submissions: ' + e.message, true);
+  }
+}
+
+function renderPendingTable(pendings) {
+  const tbody = document.getElementById('pending-tbody');
+  if (!pendings || pendings.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">No pending submissions</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = pendings.map(l => `
+    <tr>
+      <td style="font-weight:600">${esc(l.title?.en || l.title?.lo || '')}<br><span style="font-weight:normal;color:var(--mid);font-size:0.85rem">${esc(l.location?.en || l.location?.lo || '')}</span></td>
+      <td>${esc(l.submittedBy || '')}<br><span style="font-size:0.85rem;color:var(--mid)">${esc(l.submittedByPhone || '')}</span></td>
+      <td>${l.type || '—'}</td>
+      <td style="font-family:'DM Mono',monospace">${l.price ? (l.price/1e6).toFixed(1) + 'M' : '—'}</td>
+      <td style="font-size:0.85rem;color:var(--mid)">${l.submittedAt ? new Date(l.submittedAt).toLocaleDateString() : '—'}</td>
+      <td class="td-actions">
+        <button class="btn sm" style="background:#27ae60" onclick="approveLand('${l._id}')">✓ Approve</button>
+        <button class="btn sm danger" onclick="rejectLand('${l._id}', '${esc(l.title?.en || l.title?.lo || '')}')">✕ Reject</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function approveLand(id) {
+  if (!confirm('Approve this land submission? It will become publicly visible.')) return;
+  
+  try {
+    await apiReq(`/lands/${id}/approve`, 'PUT');
+    toast('Land listing approved!');
+    loadPendingSubmissions();
+    loadLands();
+  } catch (e) {
+    toast('Error approving: ' + e.message, true);
+  }
+}
+
+async function rejectLand(id, title) {
+  if (!confirm(`Reject "${title}"? This action cannot be undone.`)) return;
+  
+  try {
+    await apiReq(`/lands/${id}/reject`, 'DELETE');
+    toast('Submission rejected and deleted');
+    loadPendingSubmissions();
+  } catch (e) {
+    toast('Error rejecting: ' + e.message, true);
+  }
+}
 
 // ── Image handling ──
 function displayUploadedImages() {

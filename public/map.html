@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Land Map - TERRA</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    #map { width: 100%; height: 100vh; }
+    .map-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .map-legend {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      max-width: 300px;
+    }
+    .legend-item { margin: 8px 0; display: flex; align-items: center; gap: 10px; }
+    .legend-color { width: 20px; height: 20px; border-radius: 50%; }
+    .popup-content { font-size: 14px; }
+    .popup-content strong { display: block; margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <h1 class="logo">🌍 TERRA — Land Map</h1>
+      <div class="nav-buttons">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="lo">LO</button>
+        <button class="lang-btn" data-lang="th">TH</button>
+        <a href="index.html" class="nav-link">← Back to Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="map"></div>
+
+  <div class="map-controls">
+    <h3>Search</h3>
+    <select id="typeFilter">
+      <option value="">All Types</option>
+      <option value="agricultural">🌾 Agricultural</option>
+      <option value="residential">🏠 Residential</option>
+      <option value="commercial">🏪 Commercial</option>
+      <option value="industrial">🏭 Industrial</option>
+      <option value="investment">💰 Investment</option>
+      <option value="roadside">🛣️ Roadside</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="empty">📍 Empty</option>
+    </select>
+  </div>
+
+  <div class="map-legend">
+    <h4>Legend</h4>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #2ecc71;"></div>
+      <span>Available</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #f39c12;"></div>
+      <span>Reserved</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #e74c3c;"></div>
+      <span>Sold</span>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    let map;
+    let markers = {};
+    const statusColors = {
+      available: '#2ecc71',
+      reserved: '#f39c12',
+      sold: '#e74c3c',
+      pending: '#95a5a6'
+    };
+
+    // Initialize map (centered on Southeast Asia)
+    function initMap() {
+      map = L.map('map').setView([15.8700, 100.9925], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      loadLands();
+    }
+
+    // Load all lands and display markers
+    async function loadLands() {
+      try {
+        const lands = await apiCall('/api/lands?status=all');
+        
+        // Clear existing markers
+        Object.values(markers).forEach(marker => map.removeLayer(marker));
+        markers = {};
+
+        lands.forEach(land => {
+          if (!land.coordinates || !land.coordinates.coordinates) return;
+          
+          const [lng, lat] = land.coordinates.coordinates;
+          const color = statusColors[land.status] || '#95a5a6';
+          
+          // Create custom icon
+          const icon = L.divIcon({
+            html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
+              📍
+            </div>`,
+            iconSize: [30, 30],
+            className: 'land-marker'
+          });
+
+          const marker = L.marker([lat, lng], { icon }).addTo(map);
+          
+          // Popup content
+          const title = land.title[Lang.current] || land.title.en;
+          const location = land.location[Lang.current] || land.location.en;
+          const desc = land.description[Lang.current] || land.description.en;
+          
+          const popupHTML = `
+            <div class="popup-content">
+              <strong>${title}</strong>
+              <span>${location}</span>
+              <span>💰 ${land.price?.toLocaleString()} THB</span>
+              <span>📐 ${land.area}</span>
+              <span>Status: ${land.status}</span>
+              ${land.status !== 'pending' ? `<a href="index.html?id=${land._id}" style="color: #3498db; text-decoration: none;">View Details →</a>` : '<span style="color: #95a5a6;">Pending Approval</span>'}
+            </div>
+          `;
+          
+          marker.bindPopup(popupHTML);
+          markers[land._id] = marker;
+        });
+      } catch (e) {
+        console.error('Error loading lands:', e);
+      }
+    }
+
+    // Filter by type
+    document.getElementById('typeFilter').addEventListener('change', async (e) => {
+      try {
+        const type = e.target.value;
+        const query = type ? `/api/lands?type=${type}&status=all` : '/api/lands?status=all';
+        const lands = await apiCall(query);
+        
+        Object.values(markers).forEach(marker => map.removeLayer(marker));
+        markers = {};
+
+        lands.forEach(land => {
+          if (!land.coordinates || !land.coordinates.coordinates) return;
+          
+          const [lng, lat] = land.coordinates.coordinates;
+          const color = statusColors[land.status] || '#95a5a6';
+          
+          const icon = L.divIcon({
+            html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">📍</div>`,
+            iconSize: [30, 30]
+          });
+
+          const marker = L.marker([lat, lng], { icon }).addTo(map);
+          
+          const title = land.title[Lang.current] || land.title.en;
+          const location = land.location[Lang.current] || land.location.en;
+          
+          const popupHTML = `
+            <div class="popup-content">
+              <strong>${title}</strong>
+              <span>${location}</span>
+              <span>💰 ${land.price?.toLocaleString()} THB</span>
+              <span>📐 ${land.area}</span>
+              <span>Status: ${land.status}</span>
+              ${land.status !== 'pending' ? `<a href="index.html?id=${land._id}" style="color: #3498db;">View Details →</a>` : ''}
+            </div>
+          `;
+          
+          marker.bindPopup(popupHTML);
+          markers[land._id] = marker;
+        });
+      } catch (e) {
+        console.error('Error filtering lands:', e);
+      }
+    });
+
+    // Initialize on page load
+    initMap();
+  </script>
+</body>
+</html>

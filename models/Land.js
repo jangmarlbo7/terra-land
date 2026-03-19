@@ -25,9 +25,22 @@ const landSchema = new mongoose.Schema({
   featured: { type: Boolean, default: false },
   status: {
     type: String,
-    enum: ['available','reserved','sold'],
+    enum: ['available','reserved','sold','pending'],
     default: 'available'
-  }
+  },
+  // Map coordinates
+  coordinates: {
+    type: { type: String, enum: ['Point'], default: 'Point' },
+    coordinates: { type: [Number], default: [0, 0] } // [longitude, latitude]
+  },
+  // User submission tracking
+  submittedBy: { type: String, default: '' }, // email or name
+  submittedByPhone: { type: String, default: '' },
+  submittedAt: { type: Date, default: null },
+  approvedAt: { type: Date, default: null }
 }, { timestamps: true });
+
+// Index for geo queries
+landSchema.index({ coordinates: '2dsphere' });
 
 module.exports = mongoose.model('Land', landSchema);

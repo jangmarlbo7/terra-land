@@ -431,6 +431,8 @@
     <li><a href="#why-section" data-i18n="nav_why"></a></li>
     <li><a href="#contact-section" data-i18n="nav_contact"></a></li>
     <li><a href="#about-section" data-i18n="nav_about"></a></li>
+    <li><a href="/map.html">🗺️ Map</a></li>
+    <li><a href="/submit.html">📤 Sell Land</a></li>
     <li><a href="/admin" style="color:var(--dim)">Admin</a></li>
   </ul>
   <div class="nav-right">
@@ -552,27 +554,46 @@
       <h2 class="contact-title" data-i18n="c_title"></h2>
       <p class="contact-sub" data-i18n="c_sub"></p>
       <div class="contact-methods">
-        <div class="cm">
-          <div class="cm-icon">✆</div>
+        <!-- Phone Contact -->
+        <a href="tel:+85620528770575" class="cm" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="cm-icon">📞</div>
           <div>
             <div class="cm-label" data-i18n="c_phone_l"></div>
-            <div class="cm-val">+856 20 52877075</div>
+            <div class="cm-val" style="color: #3498db; text-decoration: underline;">+856 20 52877075</div>
           </div>
-        </div>
-        <div class="cm">
-          <div class="cm-icon" style="font-family:'DM Mono',monospace;font-size:.75rem">FB</div>
+        </a>
+        <!-- Email Contact -->
+        <a href="mailto:info@terra-land.com" class="cm" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="cm-icon">✉️</div>
+          <div>
+            <div class="cm-label">Email</div>
+            <div class="cm-val" style="color: #3498db; text-decoration: underline;">info@terra-land.com</div>
+          </div>
+        </a>
+        <!-- Facebook -->
+        <a href="https://facebook.com/jang.pmc.9" target="_blank" class="cm" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="cm-icon" style="font-family:'DM Mono',monospace;font-size:.75rem">f</div>
           <div>
             <div class="cm-label">Facebook</div>
-            <div class="cm-val">jang.pmc.9</div>
+            <div class="cm-val" style="color: #3498db; text-decoration: underline;">jang.pmc.9</div>
           </div>
-        </div>
-        <div class="cm">
-          <div class="cm-icon" style="font-family:'DM Mono',monospace;font-size:.7rem">WA</div>
+        </a>
+        <!-- WhatsApp -->
+        <a href="https://wa.me/85620528770575" target="_blank" class="cm" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="cm-icon">💬</div>
           <div>
             <div class="cm-label">WhatsApp</div>
-            <div class="cm-val">+856 20 52877075</div>
+            <div class="cm-val" style="color: #3498db; text-decoration: underline;">+856 20 52877075</div>
           </div>
-        </div>
+        </a>
+        <!-- LINE -->
+        <a href="https://line.me/ti/p/jang.pmc" target="_blank" class="cm" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="cm-icon" style="font-family:'DM Mono',monospace;font-size:.75rem">LINE</div>
+          <div>
+            <div class="cm-label">LINE</div>
+            <div class="cm-val" style="color: #3498db; text-decoration: underline;">jang.pmc</div>
+          </div>
+        </a>
       </div>
       <button class="chat-btn" onclick="showToast('Opening chat...')">
         <span style="font-size:1.1rem">💬</span>

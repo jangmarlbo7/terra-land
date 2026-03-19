@@ -46,6 +46,11 @@
           <span class="sb-icon">◻</span> All Listings
         </a>
       </li>
+      <li>
+        <a href="#" id="sbn-pending" onclick="switchPanel('pending');return false">
+          <span class="sb-icon">⏳</span> Pending Submissions <span id="pending-count" style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; margin-left: 4px;">0</span>
+        </a>
+      </li>
     </ul>
 
     <div class="sb-sec">Actions</div>
@@ -160,6 +165,28 @@
             </thead>
             <tbody id="listings-tbody">
               <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PENDING SUBMISSIONS PANEL ══ -->
+      <div class="panel" id="panel-pending">
+        <h3 style="margin-bottom: 1.5rem;">User Land Submissions Awaiting Approval</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title / Location</th>
+                <th>Submitted By</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Submitted Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pending-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">No pending submissions</td></tr>
             </tbody>
           </table>
         </div>
