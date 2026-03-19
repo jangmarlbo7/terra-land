@@ -172,7 +172,7 @@ function cardHTML(l, i) {
     <div class="card-body">
       <div class="card-type-tag">${Lang.t(typeKey)}</div>
       <div class="card-title">${esc(title)}</div>
-      <div class="card-location">📍 ${esc(loc)}</div>
+      <div class="card-location"><img src="/icon/loction.svg" alt="location" style="width: 16px; height: 16px; margin-right: 4px; vertical-align: middle;"> ${esc(loc)}</div>
       <div class="card-specs">
         <span class="card-spec">⬡ ${esc(l.area)}</span>
         ${l.deed ? `<span class="card-spec">${esc(l.deed)}</span>` : ''}
