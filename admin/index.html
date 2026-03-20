@@ -15,13 +15,13 @@
 <div class="login-screen" id="login-screen">
   <div class="login-box">
     <div class="login-logo">TERRA<span>.</span></div>
-    <div class="login-sub">// Admin Panel</div>
+    <div class="login-sub" data-i18n="adm_title">// Admin Panel</div>
     <div class="fg">
-      <label class="fl">Password</label>
-      <input class="fi" id="login-pw" type="password" placeholder="Enter admin password" autocomplete="current-password">
+      <label class="fl" data-i18n="adm_password">Password</label>
+      <input class="fi" id="login-pw" type="password" data-i18n-ph="adm_password_ph" placeholder="Enter admin password" autocomplete="current-password">
     </div>
     <div class="login-err" id="login-err"></div>
-    <button class="btn pri full" onclick="doLogin()">Sign In →</button>
+    <button class="btn pri full" onclick="doLogin()" data-i18n="adm_signin">Sign In →</button>
     <div style="margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid var(--bd)">
       <a href="/" style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);letter-spacing:.12em">← Back to public site</a>
     </div>
@@ -35,55 +35,60 @@
   <aside class="sidebar">
     <div class="sb-logo">TERRA<span>.</span></div>
 
-    <div class="sb-sec">Main</div>
+    <div class="sb-sec" data-i18n="adm_main">Main</div>
     <ul class="sb-nav">
       <li>
         <a href="#" id="sbn-dashboard" class="active" onclick="switchPanel('dashboard');return false">
-          <span class="sb-icon">◈</span> Dashboard
+          <span class="sb-icon">◈</span> <span data-i18n="adm_dashboard">Dashboard</span>
         </a>
       </li>
       <li>
         <a href="#" id="sbn-listings" onclick="switchPanel('listings');return false">
-          <span class="sb-icon">◻</span> All Listings
+          <span class="sb-icon">◻</span> <span data-i18n="adm_listings">All Listings</span>
         </a>
       </li>
       <li>
         <a href="#" id="sbn-pending" onclick="switchPanel('pending');return false">
-          <span class="sb-icon">⏳</span> Pending Submissions <span id="pending-count" style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; margin-left: 4px;">0</span>
+          <span class="sb-icon">⏳</span> <span data-i18n="adm_pending">Pending Submissions</span> <span id="pending-count" style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; margin-left: 4px;">0</span>
         </a>
       </li>
     </ul>
 
-    <div class="sb-sec">Actions</div>
+    <div class="sb-sec" data-i18n="adm_actions">Actions</div>
     <ul class="sb-nav">
       <li>
         <a href="#" onclick="openAdd();return false">
-          <span class="sb-icon">+</span> Add Listing
+          <span class="sb-icon">+</span> <span data-i18n="adm_add">Add Listing</span>
         </a>
       </li>
       <li>
         <a href="/" target="_blank">
-          <span class="sb-icon">↗</span> View Public Site
+          <span class="sb-icon">↗</span> <span data-i18n="adm_view_site">View Public Site</span>
         </a>
       </li>
       <li>
         <a href="#" onclick="switchPanel('settings');return false">
-          <span class="sb-icon">⚙</span> Settings
+          <span class="sb-icon">⚙</span> <span data-i18n="adm_settings">Settings</span>
         </a>
       </li>
     </ul>
 
     <div class="sb-foot">
-      <div class="sb-user">Logged in as Admin</div>
-      <button class="btn ghost sm" onclick="doLogout()">Sign Out</button>
+      <div class="sb-user" data-i18n="adm_loggedin">Logged in as Admin</div>
+      <button class="btn ghost sm" onclick="doLogout()" data-i18n="adm_logout">Sign Out</button>
     </div>
   </aside>
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
     <div class="main-header">
-      <div class="main-header-title" id="main-header-title">Dashboard</div>
-      <button class="btn pri sm" onclick="openAdd()">+ Add Listing</button>
+      <div class="main-header-title" id="main-header-title" data-i18n="adm_dashboard">Dashboard</div>
+      <div style="display:flex; gap: 0.5rem; align-items: center;">
+        <button class="lang-btn" data-lang="lo" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">ລາວ</button>
+        <button class="lang-btn" data-lang="en" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">EN</button>
+        <button class="lang-btn" data-lang="th" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">TH</button>
+        <button class="btn pri sm" onclick="openAdd()" data-i18n="adm_add">+ Add Listing</button>
+      </div>
     </div>
 
     <div class="main-body">
@@ -93,66 +98,66 @@
         <div class="stats-row">
           <div class="stat-card">
             <span class="stat-card-num" id="stat-total">—</span>
-            <span class="stat-card-label">Total Listings</span>
+            <span class="stat-card-label" data-i18n="adm_total">Total Listings</span>
           </div>
           <div class="stat-card">
             <span class="stat-card-num" id="stat-avail">—</span>
-            <span class="stat-card-label">Available</span>
+            <span class="stat-card-label" data-i18n="adm_avail">Available</span>
           </div>
           <div class="stat-card">
             <span class="stat-card-num" id="stat-sold">—</span>
-            <span class="stat-card-label">Sold</span>
+            <span class="stat-card-label" data-i18n="adm_sold">Sold</span>
           </div>
           <div class="stat-card">
             <span class="stat-card-num" id="stat-val">—</span>
-            <span class="stat-card-label">Portfolio Value</span>
+            <span class="stat-card-label" data-i18n="adm_value">Portfolio Value</span>
           </div>
         </div>
 
-        <div class="sec-title">Recent Listings</div>
+        <div class="sec-title" data-i18n="adm_recent">Recent Listings</div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Title / Location</th>
-                <th>Status</th>
-                <th>Price</th>
-                <th>Type</th>
+                <th data-i18n="adm_title_loc">Title / Location</th>
+                <th data-i18n="adm_status">Status</th>
+                <th data-i18n="adm_price">Price</th>
+                <th data-i18n="adm_type">Type</th>
               </tr>
             </thead>
             <tbody id="recent-tbody">
-              <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">Loading…</td></tr>
+              <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)" data-i18n="loading">Loading…</td></tr>
             </tbody>
           </table>
         </div>
         <div style="margin-top:1.25rem">
-          <button class="btn ghost sm" onclick="switchPanel('listings')">View All →</button>
+          <button class="btn ghost sm" onclick="switchPanel('listings')" data-i18n="adm_view_all">View All →</button>
         </div>
       </div>
 
       <!-- ══ LISTINGS PANEL ══ -->
       <div class="panel" id="panel-listings">
         <div style="display:flex;gap:8px;margin-bottom:1.1rem;flex-wrap:wrap;align-items:center">
-          <input class="fi" id="a-search" type="text" placeholder="Search title or location…" style="flex:1;min-width:160px">
+          <input class="fi" id="a-search" type="text" data-i18n-ph="adm_search_ph" placeholder="Search title or location…" style="flex:1;min-width:160px">
           <select class="fi" id="a-type" style="min-width:140px">
-            <option value="">All Types</option>
-            <option value="agricultural">Agricultural</option>
-            <option value="residential">Residential</option>
-            <option value="commercial">Commercial</option>
-            <option value="industrial">Industrial</option>
-            <option value="forest">Forest</option>
-            <option value="roadside">Roadside</option>
-            <option value="investment">Investment</option>
-            <option value="empty">Empty Land</option>
-            <option value="other">Other</option>
+            <option value="" data-i18n="adm_all_types">All Types</option>
+            <option value="agricultural" data-i18n="t_agricultural">Agricultural</option>
+            <option value="residential" data-i18n="t_residential">Residential</option>
+            <option value="commercial" data-i18n="t_commercial">Commercial</option>
+            <option value="industrial" data-i18n="t_industrial">Industrial</option>
+            <option value="forest" data-i18n="t_forest">Forest</option>
+            <option value="roadside" data-i18n="t_roadside">Roadside</option>
+            <option value="investment" data-i18n="t_investment">Investment</option>
+            <option value="empty" data-i18n="t_empty">Empty Land</option>
+            <option value="other" data-i18n="t_other">Other</option>
           </select>
           <select class="fi" id="a-status" style="min-width:130px">
-            <option value="">All Status</option>
-            <option value="available">Available</option>
-            <option value="reserved">Reserved</option>
-            <option value="sold">Sold</option>
+            <option value="" data-i18n="adm_all_status">All Status</option>
+            <option value="available" data-i18n="status_available">Available</option>
+            <option value="reserved" data-i18n="status_reserved">Reserved</option>
+            <option value="sold" data-i18n="status_sold">Sold</option>
           </select>
-          <button class="btn pri sm" onclick="openAdd()">+ Add</button>
+          <button class="btn pri sm" onclick="openAdd()" data-i18n="adm_add">+ Add</button>
         </div>
         <div style="text-align:right;margin-bottom:.6rem">
           <span id="table-count" style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);letter-spacing:.12em"></span>
@@ -161,16 +166,16 @@
           <table>
             <thead>
               <tr>
-                <th>Title / Location</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Area</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th data-i18n="adm_title_loc">Title / Location</th>
+                <th data-i18n="adm_type">Type</th>
+                <th data-i18n="adm_price">Price</th>
+                <th data-i18n="adm_area">Area</th>
+                <th data-i18n="adm_status">Status</th>
+                <th data-i18n="adm_actions_col">Actions</th>
               </tr>
             </thead>
             <tbody id="listings-tbody">
-              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">Loading…</td></tr>
+              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)" data-i18n="loading">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -178,21 +183,21 @@
 
       <!-- ══ PENDING SUBMISSIONS PANEL ══ -->
       <div class="panel" id="panel-pending">
-        <h3 style="margin-bottom: 1.5rem;">User Land Submissions Awaiting Approval</h3>
+        <h3 style="margin-bottom: 1.5rem;" data-i18n="adm_pending_title">User Land Submissions Awaiting Approval</h3>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Title / Location</th>
-                <th>Submitted By</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Submitted Date</th>
-                <th>Actions</th>
+                <th data-i18n="adm_title_loc">Title / Location</th>
+                <th data-i18n="adm_submitted_by">Submitted By</th>
+                <th data-i18n="adm_type">Type</th>
+                <th data-i18n="adm_price">Price</th>
+                <th data-i18n="adm_submitted_date">Submitted Date</th>
+                <th data-i18n="adm_actions_col">Actions</th>
               </tr>
             </thead>
             <tbody id="pending-tbody">
-              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">No pending submissions</td></tr>
+              <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)" data-i18n="adm_no_pending">No pending submissions</td></tr>
             </tbody>
           </table>
         </div>
@@ -200,8 +205,8 @@
 
       <!-- ══ SETTINGS PANEL ══ -->
       <div class="panel" id="panel-settings">
-        <h3 style="margin-bottom: 1.5rem;">Company Office Location</h3>
-        <p style="color: var(--mid); margin-bottom: 1.5rem;">Click on the map to set your office location. This will be displayed to all visitors.</p>
+        <h3 style="margin-bottom: 1.5rem;" data-i18n="adm_office_title">Company Office Location</h3>
+        <p style="color: var(--mid); margin-bottom: 1.5rem;" data-i18n="adm_office_desc">Click on the map to set your office location. This will be displayed to all visitors.</p>
         
         <div style="height: 400px; border: 1px solid var(--bd); border-radius: 6px; margin-bottom: 1.5rem; overflow: hidden;">
           <div id="settings-map" style="width: 100%; height: 100%;"></div>
@@ -209,24 +214,24 @@
 
         <div style="background: var(--s2); padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
           <div style="margin-bottom: 1rem;">
-            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Office Name</label>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;" data-i18n="adm_office_name">Office Name</label>
             <input type="text" id="office-name" style="width: 100%; padding: 0.75rem; border: 1px solid var(--bd); border-radius: 4px; font-family: inherit;" placeholder="TERRA Headquarters">
           </div>
           <div style="margin-bottom: 1rem;">
-            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Phone</label>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;" data-i18n="adm_office_phone">Phone</label>
             <input type="tel" id="office-phone" style="width: 100%; padding: 0.75rem; border: 1px solid var(--bd); border-radius: 4px; font-family: inherit;" placeholder="+856 20 52877075">
           </div>
           <div style="margin-bottom: 1rem;">
-            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Email</label>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;" data-i18n="adm_office_email">Email</label>
             <input type="email" id="office-email" style="width: 100%; padding: 0.75rem; border: 1px solid var(--bd); border-radius: 4px; font-family: inherit;" placeholder="info@terra-land.com">
           </div>
           <div>
-            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Coordinates</label>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;" data-i18n="adm_office_coords">Coordinates</label>
             <input type="text" id="office-coords" style="width: 100%; padding: 0.75rem; border: 1px solid var(--bd); border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 0.85rem; background: var(--bg);" readonly placeholder="Click on map to set coordinates">
           </div>
         </div>
 
-        <button class="btn pri" onclick="saveOfficeLocation()">Save Office Location →</button>
+        <button class="btn pri" onclick="saveOfficeLocation()" data-i18n="adm_office_save">Save Office Location →</button>
       </div>
 
     </div><!-- /main-body -->
@@ -238,33 +243,33 @@
 <div class="modal-overlay" id="form-modal">
   <div class="modal">
     <div class="mh">
-      <span class="m-title" id="form-modal-title">Add Listing</span>
+      <span class="m-title" id="form-modal-title" data-i18n="adm_add_listing">Add Listing</span>
       <button class="mclose" onclick="closeModal('form-modal')">✕</button>
     </div>
     <div class="mb">
       <form id="land-form" onsubmit="return false">
 
         <!-- Multilingual content -->
-        <div class="sec-title">Multilingual Content</div>
+        <div class="sec-title" data-i18n="adm_form_title">Multilingual Content</div>
         <div class="ltabs">
-          <button type="button" class="ltab active" data-lang="en" onclick="switchLangTab('en')">English</button>
-          <button type="button" class="ltab" data-lang="lo" onclick="switchLangTab('lo')">ລາວ</button>
-          <button type="button" class="ltab" data-lang="th" onclick="switchLangTab('th')">ไทย</button>
+          <button type="button" class="ltab active" data-lang="en" onclick="switchLangTab('en')" data-i18n="adm_lang_en">English</button>
+          <button type="button" class="ltab" data-lang="lo" onclick="switchLangTab('lo')" data-i18n="adm_lang_lo">ລາວ</button>
+          <button type="button" class="ltab" data-lang="th" onclick="switchLangTab('th')" data-i18n="adm_lang_th">ไทย</button>
         </div>
 
         <!-- EN -->
         <div class="lp active" data-lang="en">
           <div class="fgrid">
             <div class="fg full">
-              <label class="fl">Title (English) <span class="req">*</span></label>
+              <label class="fl" data-i18n="adm_title_en">Title (English) <span class="req" data-i18n="adm_required">*</span></label>
               <input class="fi" id="f-title-en" type="text" placeholder="e.g. Riverside Agricultural Plot">
             </div>
             <div class="fg full">
-              <label class="fl">Location (English) <span class="req">*</span></label>
+              <label class="fl" data-i18n="adm_location_en">Location (English) <span class="req" data-i18n="adm_required">*</span></label>
               <input class="fi" id="f-loc-en" type="text" placeholder="District, Province">
             </div>
             <div class="fg full">
-              <label class="fl">Description (English)</label>
+              <label class="fl" data-i18n="adm_desc_en">Description (English)</label>
               <textarea class="fi" id="f-desc-en" placeholder="Describe the land, access roads, surroundings…"></textarea>
             </div>
           </div>
@@ -274,15 +279,15 @@
         <div class="lp" data-lang="lo">
           <div class="fgrid">
             <div class="fg full">
-              <label class="fl">ຊື່ (ລາວ)</label>
+              <label class="fl" data-i18n="adm_title_lo">ຊື່ (ລາວ)</label>
               <input class="fi" id="f-title-lo" type="text" placeholder="ຊື່ທີ່ດິນ">
             </div>
             <div class="fg full">
-              <label class="fl">ສະຖານທີ່ (ລາວ)</label>
+              <label class="fl" data-i18n="adm_location_lo">ສະຖານທີ່ (ລາວ)</label>
               <input class="fi" id="f-loc-lo" type="text" placeholder="ເມືອງ, ແຂວງ">
             </div>
             <div class="fg full">
-              <label class="fl">ລາຍລະອຽດ (ລາວ)</label>
+              <label class="fl" data-i18n="adm_desc_lo">ລາຍລະອຽດ (ລາວ)</label>
               <textarea class="fi" id="f-desc-lo" placeholder="ລາຍລະອຽດທີ່ດິນ…"></textarea>
             </div>
           </div>
@@ -292,115 +297,115 @@
         <div class="lp" data-lang="th">
           <div class="fgrid">
             <div class="fg full">
-              <label class="fl">ชื่อ (ไทย)</label>
+              <label class="fl" data-i18n="adm_title_th">ชื่อ (ไทย)</label>
               <input class="fi" id="f-title-th" type="text" placeholder="ชื่อที่ดิน">
             </div>
             <div class="fg full">
-              <label class="fl">ที่ตั้ง (ไทย)</label>
+              <label class="fl" data-i18n="adm_location_th">ที่ตั้ง (ไทย)</label>
               <input class="fi" id="f-loc-th" type="text" placeholder="อำเภอ, จังหวัด">
             </div>
             <div class="fg full">
-              <label class="fl">รายละเอียด (ไทย)</label>
+              <label class="fl" data-i18n="adm_desc_th">รายละเอียด (ไทย)</label>
               <textarea class="fi" id="f-desc-th" placeholder="รายละเอียดที่ดิน…"></textarea>
             </div>
           </div>
         </div>
 
         <!-- Listing details -->
-        <div class="sec-title" style="margin-top:1.75rem">Listing Details</div>
+        <div class="sec-title" style="margin-top:1.75rem" data-i18n="adm_listing_details">Listing Details</div>
         <div class="fgrid">
           <div class="fg">
-            <label class="fl">Price (฿) <span class="req">*</span></label>
+            <label class="fl" data-i18n="adm_form_price">Price (฿) <span class="req" data-i18n="adm_required">*</span></label>
             <input class="fi" id="f-price" type="number" min="0" placeholder="0">
           </div>
           <div class="fg">
-            <label class="fl">Area <span class="req">*</span></label>
+            <label class="fl" data-i18n="adm_form_area">Area <span class="req" data-i18n="adm_required">*</span></label>
             <input class="fi" id="f-area" type="text" placeholder="e.g. 10 Rai / 400 sq.wah">
           </div>
           <div class="fg">
-            <label class="fl">Land Type <span class="req">*</span></label>
+            <label class="fl" data-i18n="adm_form_type">Land Type <span class="req" data-i18n="adm_required">*</span></label>
             <select class="fi" id="f-type">
-              <option value="">Select type</option>
-              <option value="agricultural">Agricultural</option>
-              <option value="residential">Residential</option>
-              <option value="commercial">Commercial</option>
-              <option value="industrial">Industrial</option>
-              <option value="forest">Forest</option>
-              <option value="roadside">Roadside</option>
-              <option value="investment">Investment</option>
-              <option value="empty">Empty Land</option>
-              <option value="other">Other</option>
+              <option value="" data-i18n="adm_select_type">Select type</option>
+              <option value="agricultural" data-i18n="t_agricultural">Agricultural</option>
+              <option value="residential" data-i18n="t_residential">Residential</option>
+              <option value="commercial" data-i18n="t_commercial">Commercial</option>
+              <option value="industrial" data-i18n="t_industrial">Industrial</option>
+              <option value="forest" data-i18n="t_forest">Forest</option>
+              <option value="roadside" data-i18n="t_roadside">Roadside</option>
+              <option value="investment" data-i18n="t_investment">Investment</option>
+              <option value="empty" data-i18n="t_empty">Empty Land</option>
+              <option value="other" data-i18n="t_other">Other</option>
             </select>
           </div>
           <div class="fg">
-            <label class="fl">Status</label>
+            <label class="fl" data-i18n="adm_form_status">Status</label>
             <select class="fi" id="f-status">
-              <option value="available">Available</option>
-              <option value="reserved">Reserved</option>
-              <option value="sold">Sold</option>
+              <option value="available" data-i18n="status_available">Available</option>
+              <option value="reserved" data-i18n="status_reserved">Reserved</option>
+              <option value="sold" data-i18n="status_sold">Sold</option>
             </select>
           </div>
           <div class="fg">
-            <label class="fl">Featured</label>
+            <label class="fl" data-i18n="adm_form_featured">Featured</label>
             <select class="fi" id="f-featured">
               <option value="false">No</option>
               <option value="true">Yes — show in featured section</option>
             </select>
           </div>
           <div class="fg">
-            <label class="fl">Title Deed</label>
+            <label class="fl" data-i18n="adm_form_deed">Title Deed</label>
             <input class="fi" id="f-deed" type="text" placeholder="e.g. Chanote / ໂຉນ / โฉนด">
           </div>
         </div>
 
         <!-- Contact -->
-        <div class="sec-title" style="margin-top:1.75rem">Contact Info</div>
+        <div class="sec-title" style="margin-top:1.75rem" data-i18n="adm_contact_info">Contact Info</div>
         <div class="fgrid">
           <div class="fg">
-            <label class="fl">Agent / Owner Name</label>
+            <label class="fl" data-i18n="adm_agent_name">Agent / Owner Name</label>
             <input class="fi" id="f-contact" type="text">
           </div>
           <div class="fg">
-            <label class="fl">Phone</label>
+            <label class="fl" data-i18n="adm_form_phone">Phone</label>
             <input class="fi" id="f-phone" type="tel" placeholder="+856 / +66 …">
           </div>
         </div>
 
         <!-- Land Location on Map -->
-        <div class="sec-title" style="margin-top:1.75rem">Land Location</div>
-        <p style="font-size: 0.9rem; color: var(--mid); margin-bottom: 1rem;">Click on the map below to set the land's location coordinates.</p>
+        <div class="sec-title" style="margin-top:1.75rem" data-i18n="adm_land_location">Land Location</div>
+        <p style="font-size: 0.9rem; color: var(--mid); margin-bottom: 1rem;" data-i18n="adm_map_desc">Click on the map below to set the land's location coordinates.</p>
         <div style="height: 300px; border: 1px solid var(--bd); border-radius: 6px; margin-bottom: 1rem; overflow: hidden;">
           <div id="land-form-map" style="width: 100%; height: 100%;"></div>
         </div>
         <div style="background: var(--s2); padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div>
-              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;">Latitude</label>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;" data-i18n="adm_latitude">Latitude</label>
               <input type="text" id="f-latitude" style="width: 100%; padding: 0.75rem; border: 1px solid var(--bd); border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 0.85rem;" readonly placeholder="Click on map">
             </div>
             <div>
-              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;">Longitude</label>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;" data-i18n="adm_longitude">Longitude</label>
               <input type="text" id="f-longitude" style="width: 100%; padding: 0.75rem; border: 1px solid var(--bd); border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 0.85rem;" readonly placeholder="Click on map">
             </div>
           </div>
         </div>
 
         <!-- Images -->
-        <div class="sec-title" style="margin-top:1.75rem">Images</div>
+        <div class="sec-title" style="margin-top:1.75rem" data-i18n="adm_images">Images</div>
         <div class="fgrid">
           <div class="fg full">
-            <label class="fl">Upload Images</label>
+            <label class="fl" data-i18n="adm_upload_images">Upload Images</label>
             <input class="fi" id="f-image-files" type="file" multiple accept="image/*">
-            <div class="fhint">Select one or more images from your PC (jpg, png, gif, webp)</div>
+            <div class="fhint" data-i18n="adm_select_images">Select one or more images from your PC (jpg, png, gif, webp)</div>
           </div>
           <div class="fg full">
-            <label class="fl">Existing Image URLs (optional)</label>
-            <textarea class="fi" id="f-image-urls" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="min-height:72px"></textarea>
-            <div class="fhint">Paste full image URLs, one per line (will be added to uploaded images)</div>
+            <label class="fl" data-i18n="adm_existing_urls">Existing Image URLs (optional)</label>
+            <textarea class="fi" id="f-image-urls" data-i18n-ph="adm_urls_hint" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="min-height:72px"></textarea>
+            <div class="fhint" data-i18n="adm_urls_hint">Paste full image URLs, one per line (will be added to uploaded images)</div>
           </div>
         </div>
         <div id="upload-progress" style="display:none;margin-top:1rem">
-          <div style="font-size:0.75rem;color:var(--mid);margin-bottom:0.5rem">Uploading...</div>
+          <div style="font-size:0.75rem;color:var(--mid);margin-bottom:0.5rem" data-i18n="adm_uploading">Uploading...</div>
           <div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden">
             <div id="upload-progress-bar" style="height:100%;background:var(--link);width:0%;transition:width 0.3s ease"></div>
           </div>
@@ -413,8 +418,8 @@
     </div>
     <div class="mfooter">
       <span class="ferr" id="form-err"></span>
-      <button class="btn ghost sm" onclick="closeModal('form-modal')">Cancel</button>
-      <button class="btn pri sm" id="save-btn" onclick="saveListing()">Save Listing →</button>
+      <button class="btn ghost sm" onclick="closeModal('form-modal')" data-i18n="adm_cancel">Cancel</button>
+      <button class="btn pri sm" id="save-btn" onclick="saveListing()" data-i18n="adm_save_listing">Save Listing →</button>
     </div>
   </div>
 </div>
@@ -424,18 +429,18 @@
 <div class="modal-overlay" id="delete-modal">
   <div class="modal sm">
     <div class="mh">
-      <span class="m-title">Confirm Delete</span>
+      <span class="m-title" data-i18n="adm_confirm_delete">Confirm Delete</span>
       <button class="mclose" onclick="closeModal('delete-modal')">✕</button>
     </div>
     <div class="mb">
       <p style="font-size:.86rem;color:var(--mid);line-height:1.75;margin-bottom:1.5rem">
-        Permanently delete <strong id="delete-name" style="color:var(--ink)"></strong>?
-        This action cannot be undone.
+        <span data-i18n="adm_delete_msg">Permanently delete</span> <strong id="delete-name" style="color:var(--ink)"></strong>?
+        <span data-i18n="adm_cannot_undo">This action cannot be undone.</span>
       </p>
     </div>
     <div class="mfooter">
-      <button class="btn ghost sm" onclick="closeModal('delete-modal')">Cancel</button>
-      <button class="btn danger sm" id="confirm-delete-btn" onclick="doDelete()">Delete</button>
+      <button class="btn ghost sm" onclick="closeModal('delete-modal')" data-i18n="adm_cancel">Cancel</button>
+      <button class="btn danger sm" id="confirm-delete-btn" onclick="doDelete()" data-i18n="adm_delete">Delete</button>
     </div>
   </div>
 </div>
@@ -443,6 +448,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/js/lang.js"></script>
 <script src="/admin/js/admin.js"></script>
 </body>
 </html>

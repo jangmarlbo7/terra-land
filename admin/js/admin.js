@@ -27,11 +27,11 @@ async function doLogin() {
       headers: { 'Content-Type': 'application/json', 'x-admin-token': pw },
       body: JSON.stringify({})
     });
-    if (res.status === 401) { tx('login-err', 'Wrong password.'); return; }
+    if (res.status === 401) { tx('login-err', Lang.t('adm_wrong_pw')); return; }
     adminToken = pw;
     sessionStorage.setItem('terra_admin', pw);
     showAdmin();
-  } catch (e) { tx('login-err', 'Cannot connect to server: ' + e.message); }
+  } catch (e) { tx('login-err', Lang.t('adm_connect_err') + ' ' + e.message); }
 }
 
 function doLogout() {
@@ -100,7 +100,7 @@ async function loadLands() {
     renderDashboard();
     renderTable();
   } catch (e) {
-    toast('Error loading listings: ' + e.message, true);
+    toast(Lang.t('adm_error_load') + ' ' + e.message, true);
   }
 }
 
@@ -130,7 +130,7 @@ function renderDashboard() {
       <td class="td-price">฿${Number(l.price).toLocaleString()}</td>
       <td>${esc(l.type || '—')}</td>
     </tr>`).join('') ||
-    '<tr><td colspan="4" style="color:var(--mid);text-align:center;padding:2rem">No listings yet</td></tr>';
+    `<tr><td colspan="4" style="color:var(--mid);text-align:center;padding:2rem">${Lang.t('adm_no_listings')}</td></tr>`;
 }
 
 // ── Listings Table ──
@@ -168,7 +168,7 @@ function renderTable() {
         <button class="btn sm danger" onclick="askDelete('${l._id}', '${esc(l.title?.en || l.title?.lo || '')}')">Delete</button>
       </td>
     </tr>`).join('') ||
-    '<tr><td colspan="6" style="color:var(--mid);text-align:center;padding:3rem">No listings found</td></tr>';
+    `<tr><td colspan="6" style="color:var(--mid);text-align:center;padding:3rem">${Lang.t('empty_title')}</td></tr>`;
 }
 
 // ── Panel switching ──
@@ -287,16 +287,16 @@ async function saveOfficeLocation() {
       return r.json();
     });
 
-    toast('Office location saved ✓');
+    toast(Lang.t('adm_office_save') + ' ✓');
   } catch (e) {
-    toast('Failed to save office location: ' + e.message, true);
+    toast(Lang.t('adm_office_save') + ': ' + e.message, true);
   }
 }
 
 // ── Add modal ──
 function openAdd() {
   editingId = null;
-  tx('form-modal-title', 'Add New Listing');
+  tx('form-modal-title', Lang.t('adm_add_listing'));
   resetForm();
   openModal('form-modal');
   setTimeout(() => initLandFormMap(), 100);
@@ -305,7 +305,7 @@ function openAdd() {
 // ── Edit modal ──
 async function openEdit(id) {
   editingId = id;
-  tx('form-modal-title', 'Edit Listing');
+  tx('form-modal-title', Lang.t('adm_edit_listing'));
   resetForm();
   openModal('form-modal');
   setTimeout(() => initLandFormMap(), 100);
@@ -314,7 +314,7 @@ async function openEdit(id) {
     const l = await apiReq(`/lands/${id}`);
     fillForm(l);
   } catch (e) {
-    toast('Failed to load: ' + e.message, true);
+    toast(Lang.t('adm_error_load') + ' ' + e.message, true);
     closeModal('form-modal');
   }
 }
@@ -398,10 +398,10 @@ async function saveListing() {
     const body = buildFormBody();
     if (editingId) {
       await apiReq(`/lands/${editingId}`, 'PUT', body);
-      toast('Listing updated ✓');
+      toast(Lang.t('adm_edit_listing') + ' ✓');
     } else {
       await apiReq('/lands', 'POST', body);
-      toast('Listing created ✓');
+      toast(Lang.t('adm_add_listing') + ' ✓');
     }
     closeModal('form-modal');
     await loadLands();
@@ -465,7 +465,7 @@ async function doDelete() {
   try {
     await apiReq(`/lands/${deleteId}`, 'DELETE');
     closeModal('delete-modal');
-    toast('Listing deleted');
+    toast(Lang.t('adm_delete') + ' ✓');
     await loadLands();
   } catch (e) {
     toast('Delete failed: ' + e.message, true);
@@ -517,14 +517,14 @@ async function loadPendingSubmissions() {
     document.getElementById('pending-count').innerText = pending.length;
     renderPendingTable(pending);
   } catch (e) {
-    toast('Error loading pending submissions: ' + e.message, true);
+    toast(Lang.t('adm_error_load') + ' ' + e.message, true);
   }
 }
 
 function renderPendingTable(pendings) {
   const tbody = document.getElementById('pending-tbody');
   if (!pendings || pendings.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">No pending submissions</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--mid)">${Lang.t('adm_no_pending')}</td></tr>`;
     return;
   }
 
@@ -610,6 +610,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('a-search')?.addEventListener('input', renderTable);
   document.getElementById('a-type')?.addEventListener('change', renderTable);
   document.getElementById('a-status')?.addEventListener('change', renderTable);
+  
+  // Language change listener - update admin panel when language changes
+  document.addEventListener('langchange', () => {
+    renderDashboard();
+    renderTable();
+    loadPendingSubmissions();
+  });
   
   // File input event
   document.getElementById('f-image-files')?.addEventListener('change', () => {
